@@ -1,0 +1,9 @@
+node_modules/
+.env
+coverage/
+*.log
+.DS_Store
+.vscode/
+.nyc_output/
+src/public/img/*
+!src/public/img/.gitkeep

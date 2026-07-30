@@ -1,0 +1,7 @@
+{
+  "all": true,
+  "include": ["src/**/*.js"],
+  "exclude": ["src/config/swagger.js", "src/public/**"],
+  "reporter": ["text", "html", "lcov"],
+  "report-dir": "coverage"
+}

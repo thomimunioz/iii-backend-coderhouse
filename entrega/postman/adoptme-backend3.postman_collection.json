@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "AdoptMe API - Backend III Coderhouse",
+    "description": "Coleccion completa de la API AdoptMe. Variables: baseUrl, uid, pid, aid.\n\nFlujo sugerido:\n1. Health check\n2. Mocks > generateData\n3. Users > Listar (copiar un _id a la variable uid)\n4. Pets > Listar (copiar un _id a la variable pid)\n5. Adoptions > Crear adopcion\n6. Adoptions > Listar\n7. Adoptions > Crear adopcion otra vez (400: Pet is already adopted)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "uid", "value": "", "type": "string" },
+    { "key": "pid", "value": "", "type": "string" },
+    { "key": "aid", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] },
+            "description": "Estado del proceso y de la conexion a MongoDB. Es el endpoint que consulta el HEALTHCHECK del contenedor."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adoptions",
+      "item": [
+        {
+          "name": "GET /api/adoptions - listar todas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/adoptions", "host": ["{{baseUrl}}"], "path": ["api", "adoptions"] }
+          }
+        },
+        {
+          "name": "GET /api/adoptions/:aid - por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/adoptions/{{aid}}", "host": ["{{baseUrl}}"], "path": ["api", "adoptions", "{{aid}}"] }
+          }
+        },
+        {
+          "name": "GET /api/adoptions/:aid - 404 no existe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/adoptions/000000000000000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adoptions", "000000000000000000000000"]
+            },
+            "description": "ObjectId con formato valido que no existe en la base: responde 404 Adoption not found."
+          }
+        },
+        {
+          "name": "GET /api/adoptions/:aid - 400 id invalido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/adoptions/id-invalido",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adoptions", "id-invalido"]
+            },
+            "description": "El middleware validateObjectId corta antes del controller: 400 sin consultar la base."
+          }
+        },
+        {
+          "name": "POST /api/adoptions/:uid/:pid - crear adopcion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/adoptions/{{uid}}/{{pid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "adoptions", "{{uid}}", "{{pid}}"]
+            },
+            "description": "201 Created. Reenviar el mismo request para obtener 400 Pet is already adopted."
+          }
+        },
+        {
+          "name": "POST /api/adoptions - 404 sin parametros",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/adoptions", "host": ["{{baseUrl}}"], "path": ["api", "adoptions"] },
+            "description": "El router no expone POST sin parametros: 404 en JSON."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET /api/users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "GET /api/users/:uid",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/users/{{uid}}", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{uid}}"] }
+          }
+        },
+        {
+          "name": "PUT /api/users/:uid",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"first_name\": \"Nombre actualizado\",\n    \"role\": \"admin\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/users/{{uid}}", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{uid}}"] }
+          }
+        },
+        {
+          "name": "DELETE /api/users/:uid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/users/{{uid}}", "host": ["{{baseUrl}}"], "path": ["api", "users", "{{uid}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pets",
+      "item": [
+        {
+          "name": "GET /api/pets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pets", "host": ["{{baseUrl}}"], "path": ["api", "pets"] }
+          }
+        },
+        {
+          "name": "POST /api/pets",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Firulais\",\n    \"specie\": \"dog\",\n    \"birthDate\": \"2021-05-14\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/pets", "host": ["{{baseUrl}}"], "path": ["api", "pets"] }
+          }
+        },
+        {
+          "name": "POST /api/pets - 400 datos incompletos",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"name\": \"Sin especie\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/pets", "host": ["{{baseUrl}}"], "path": ["api", "pets"] }
+          }
+        },
+        {
+          "name": "POST /api/pets/withimage",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Firulais", "type": "text" },
+                { "key": "specie", "value": "dog", "type": "text" },
+                { "key": "birthDate", "value": "2021-05-14", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/pets/withimage", "host": ["{{baseUrl}}"], "path": ["api", "pets", "withimage"] }
+          }
+        },
+        {
+          "name": "PUT /api/pets/:pid",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"name\": \"Firulais actualizado\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/pets/{{pid}}", "host": ["{{baseUrl}}"], "path": ["api", "pets", "{{pid}}"] }
+          }
+        },
+        {
+          "name": "DELETE /api/pets/:pid",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pets/{{pid}}", "host": ["{{baseUrl}}"], "path": ["api", "pets", "{{pid}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "POST /api/sessions/register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"Thomas\",\n    \"last_name\": \"Munoz\",\n    \"email\": \"thomas@correo.com\",\n    \"password\": \"coder123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/sessions/register", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "register"] }
+          }
+        },
+        {
+          "name": "POST /api/sessions/login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"thomas@correo.com\",\n    \"password\": \"coder123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/sessions/login", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "login"] },
+            "description": "Devuelve la cookie coderCookie (httpOnly) con el JWT."
+          }
+        },
+        {
+          "name": "GET /api/sessions/current",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/sessions/current", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "current"] },
+            "description": "Usa la cookie del login. Sin cookie responde 401."
+          }
+        },
+        {
+          "name": "POST /api/sessions/logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/sessions/logout", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mocks",
+      "item": [
+        {
+          "name": "GET /api/mocks/mockingusers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mocks/mockingusers?quantity=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mocks", "mockingusers"],
+              "query": [{ "key": "quantity", "value": "50" }]
+            },
+            "description": "Genera usuarios falsos SIN insertarlos en la base."
+          }
+        },
+        {
+          "name": "GET /api/mocks/mockingpets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mocks/mockingpets?quantity=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mocks", "mockingpets"],
+              "query": [{ "key": "quantity", "value": "100" }]
+            }
+          }
+        },
+        {
+          "name": "POST /api/mocks/generateData",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mocks/generateData?users=10&pets=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mocks", "generateData"],
+              "query": [
+                { "key": "users", "value": "10" },
+                { "key": "pets", "value": "20" }
+              ]
+            },
+            "description": "Genera e INSERTA los datos en MongoDB. El password de todos los usuarios mock es coder123."
+          }
+        }
+      ]
+    }
+  ]
+}

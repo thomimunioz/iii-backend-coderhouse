@@ -1,0 +1,26 @@
+# Todo lo que no necesita el build. Reduce el contexto que se envia al daemon,
+# acelera la construccion y evita filtrar secretos o basura dentro de la imagen.
+node_modules
+npm-debug.log*
+coverage
+.nyc_output
+
+# Secretos: las variables se inyectan en runtime con --env-file, nunca se copian.
+.env
+*.pem
+
+# Control de version y editor
+.git
+.gitignore
+.vscode
+.idea
+
+# Documentacion y material de la entrega (no forma parte de la app)
+entrega
+notas-internas
+README.md
+*.md
+
+# Imagenes subidas en desarrollo
+src/public/img/*
+!src/public/img/.gitkeep
