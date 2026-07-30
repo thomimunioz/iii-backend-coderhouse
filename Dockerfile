@@ -88,7 +88,7 @@ LABEL org.opencontainers.image.title="AdoptMe API" \
       org.opencontainers.image.description="API de adopciones - Proyecto Final Backend III (Coderhouse)" \
       org.opencontainers.image.version="1.0.0" \
       org.opencontainers.image.authors="Thomas Munoz" \
-      org.opencontainers.image.source="https://github.com/thomimunioz/backend-3_coderhouse"
+      org.opencontainers.image.source="https://github.com/thomimunioz/iii-backend-coderhouse"
 
 # --chown evita un RUN chown extra (que duplicaria el peso de la capa copiada).
 COPY --from=prune --chown=node:node /app/node_modules ./node_modules

@@ -21,7 +21,7 @@ find . -not -path "./node_modules*" -not -path "./.git/*" -not -path "./coverage
 ```
 
 ```
-backend-3_coderhouse/
+iii-backend-coderhouse/
 ├── .c8rc.json
 ├── .dockerignore
 ├── .env.example

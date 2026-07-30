@@ -31,7 +31,7 @@ const DATOS = {
     subtitulo: 'API AdoptMe: tests funcionales, dockerización y documentación',
     curso: 'Backend III — Coderhouse',
     alumno: 'Thomas Muñoz',
-    repositorio: 'https://github.com/thomimunioz/backend-3_coderhouse',
+    repositorio: 'https://github.com/thomimunioz/iii-backend-coderhouse',
     dockerhub: 'https://hub.docker.com/r/thomimunioz/adoptme-backend3',
     imagen: 'thomimunioz/adoptme-backend3:1.0.0'
 }

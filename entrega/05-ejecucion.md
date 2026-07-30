@@ -20,8 +20,8 @@ Los **tests no requieren MongoDB ni Docker**: las dependencias externas están a
 ### A.1 Clonar el repositorio e instalar dependencias
 
 ```bash
-git clone https://github.com/thomimunioz/backend-3_coderhouse.git
-cd backend-3_coderhouse
+git clone https://github.com/thomimunioz/iii-backend-coderhouse.git
+cd iii-backend-coderhouse
 npm install
 ```
 

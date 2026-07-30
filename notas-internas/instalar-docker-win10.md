@@ -102,7 +102,7 @@ El último comando descarga una imagen mínima y la ejecuta. Si imprime *"Hello 
 4. Loguearse desde la terminal:
 
 ```powershell
-docker login -u TU_USUARIO
+docker login -u thomimunioz
 # cuando pida password, pegar el TOKEN (no la contraseña de la cuenta)
 ```
 

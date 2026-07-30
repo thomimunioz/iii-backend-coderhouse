@@ -4,11 +4,11 @@
 
 **Curso:** Backend III — Coderhouse
 **Alumno:** Thomas Muñoz
-**Fecha:** 29 de julio de 2026
+**Fecha:** 30 de julio de 2026
 
 | Recurso | URL |
 |---|---|
-| Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/backend-3_coderhouse |
+| Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
 | Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
 | Imagen y tag | `thomimunioz/adoptme-backend3:1.0.0` |
 
@@ -57,7 +57,7 @@ find . -not -path "./node_modules*" -not -path "./.git/*" -not -path "./coverage
 ```
 
 ```
-backend-3_coderhouse/
+iii-backend-coderhouse/
 ├── .c8rc.json
 ├── .dockerignore
 ├── .env.example
@@ -1166,7 +1166,7 @@ LABEL org.opencontainers.image.title="AdoptMe API" \
       org.opencontainers.image.description="API de adopciones - Proyecto Final Backend III (Coderhouse)" \
       org.opencontainers.image.version="1.0.0" \
       org.opencontainers.image.authors="Thomas Munoz" \
-      org.opencontainers.image.source="https://github.com/thomimunioz/backend-3_coderhouse"
+      org.opencontainers.image.source="https://github.com/thomimunioz/iii-backend-coderhouse"
 
 # --chown evita un RUN chown extra (que duplicaria el peso de la capa copiada).
 COPY --from=prune --chown=node:node /app/node_modules ./node_modules
@@ -1541,8 +1541,8 @@ Los **tests no requieren MongoDB ni Docker**: las dependencias externas están a
 ### A.1 Clonar el repositorio e instalar dependencias
 
 ```bash
-git clone https://github.com/thomimunioz/backend-3_coderhouse.git
-cd backend-3_coderhouse
+git clone https://github.com/thomimunioz/iii-backend-coderhouse.git
+cd iii-backend-coderhouse
 npm install
 ```
 
@@ -1941,7 +1941,7 @@ Este entregable final agrega sobre el proyecto base:
 
 | Recurso | URL |
 |---|---|
-| Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/backend-3_coderhouse |
+| Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
 | Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
 | Imagen y tag | `thomimunioz/adoptme-backend3:1.0.0` |
 | Documentación de la API (local) | http://localhost:8080/api/docs |
@@ -1995,8 +1995,8 @@ Este entregable final agrega sobre el proyecto base:
 ## Instalación local
 
 ```bash
-git clone https://github.com/thomimunioz/backend-3_coderhouse.git
-cd backend-3_coderhouse
+git clone https://github.com/thomimunioz/iii-backend-coderhouse.git
+cd iii-backend-coderhouse
 npm install
 cp .env.example .env      # en Windows PowerShell: Copy-Item .env.example .env
 ```
@@ -2308,7 +2308,7 @@ npm audit --omit=dev
 ## Estructura del proyecto
 
 ```
-backend-3_coderhouse/
+iii-backend-coderhouse/
 ├── .c8rc.json                  Configuración del reporte de cobertura
 ├── .dockerignore               Qué NO entra al contexto de build
 ├── .env.example                Plantilla de variables de entorno (versionada)

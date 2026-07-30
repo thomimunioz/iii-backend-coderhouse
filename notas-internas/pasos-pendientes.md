@@ -124,7 +124,7 @@ Crear el repositorio **público** `backend-3_coderhouse` en https://github.com/n
 (sin README, sin .gitignore, sin licencia: el repo local ya los tiene) y después:
 
 ```powershell
-git remote add origin https://github.com/thomimunioz/backend-3_coderhouse.git
+git remote add origin https://github.com/thomimunioz/iii-backend-coderhouse.git
 git push -u origin main
 ```
 
