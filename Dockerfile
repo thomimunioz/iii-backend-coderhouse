@@ -8,7 +8,7 @@
 #  ni devDependencies, ni documentacion de la entrega.
 #
 #  Comandos utiles:
-#    docker build -t thomimunioz/adoptme-backend3:1.0.0 .
+#    docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 #    docker build --target test .        -> corre los 28 tests dentro de la imagen
 # ==============================================================================
 

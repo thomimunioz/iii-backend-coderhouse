@@ -91,9 +91,9 @@ El último comando descarga una imagen mínima y la ejecuta. Si imprime *"Hello 
 
 ## Paso 4 — Crear la cuenta y el token de DockerHub
 
-1. Crear cuenta en https://hub.docker.com (si no tenés). Anotá el **usuario exacto**: es el prefijo del nombre de la imagen (`USUARIO/adoptme-backend3`).
+1. Crear cuenta en https://hub.docker.com (si no tenés). Anotá el **usuario exacto**: es el prefijo del nombre de la imagen (`USUARIO/iii-backend-coderhouse`).
 2. Crear el repositorio: **Repositories → Create repository**
-   - Name: `adoptme-backend3`
+   - Name: `iii-backend-coderhouse`
    - Visibility: **Public** (la consigna pide que la URL sea accesible públicamente)
 3. Generar un token en lugar de usar la contraseña: **Account Settings → Personal access tokens → Generate new token**
    - Description: `backend3-coderhouse`

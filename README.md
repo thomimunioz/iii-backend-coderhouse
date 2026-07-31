@@ -15,8 +15,8 @@ Este entregable final agrega sobre el proyecto base:
 | Recurso | URL |
 |---|---|
 | Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
-| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
-| Imagen y tag | `thomimunioz/adoptme-backend3:1.0.0` |
+| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
+| Imagen y tag | `thomimunioz/iii-backend-coderhouse:1.0.0` |
 | Documentación de la API (local) | http://localhost:8080/api/docs |
 
 ---
@@ -279,14 +279,14 @@ El módulo de adopciones queda con **100% de statements, líneas y funciones**. 
 ### Construir la imagen
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ### Correr el contenedor
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 Con MongoDB local en el host, la URI del `.env` debe apuntar a `host.docker.internal`:
@@ -295,7 +295,7 @@ Con MongoDB local en el host, la URI del `.env` debe apuntar a `host.docker.inte
 docker run -d --name adoptme -p 8080:8080 \
   -e MONGODB_URI="mongodb://host.docker.internal:27017/adoptme" \
   -e SECRET_KEY="una-clave-larga-y-aleatoria" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 Verificar que la aplicación responde dentro del contenedor:
@@ -339,7 +339,7 @@ docker build --target test -t adoptme-tests .
 
 ### Log de construcción
 
-<!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/adoptme-backend3:1.0.0 .` -->
+<!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .` -->
 
 ### Log de ejecución del contenedor
 
@@ -349,26 +349,26 @@ docker build --target test -t adoptme-tests .
 
 ## DockerHub
 
-Imagen pública: **https://hub.docker.com/r/thomimunioz/adoptme-backend3**
+Imagen pública: **https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse**
 
 ```bash
 docker login
-docker push thomimunioz/adoptme-backend3:1.0.0
-docker push thomimunioz/adoptme-backend3:latest
+docker push thomimunioz/iii-backend-coderhouse:1.0.0
+docker push thomimunioz/iii-backend-coderhouse:latest
 ```
 
 Para usarla sin clonar el repositorio:
 
 ```bash
-docker pull thomimunioz/adoptme-backend3:1.0.0
-docker run -d -p 8080:8080 -e MONGODB_URI="<tu-uri>" thomimunioz/adoptme-backend3:1.0.0
+docker pull thomimunioz/iii-backend-coderhouse:1.0.0
+docker run -d -p 8080:8080 -e MONGODB_URI="<tu-uri>" thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ### Escaneo de seguridad
 
 ```bash
-docker scout quickview thomimunioz/adoptme-backend3:1.0.0
-docker scout cves thomimunioz/adoptme-backend3:1.0.0
+docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
+docker scout cves thomimunioz/iii-backend-coderhouse:1.0.0
 npm audit --omit=dev
 ```
 

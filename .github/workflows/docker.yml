@@ -1,0 +1,279 @@
+name: Tests, imagen Docker y publicacion en DockerHub
+
+# Pipeline de integracion continua del Proyecto Final de Backend III.
+#
+# Hace, en la nube, exactamente lo mismo que se documenta para hacer a mano en
+# el README: corre los tests, construye la imagen, la levanta junto a MongoDB,
+# verifica que la API responda, la publica en DockerHub y la escanea.
+#
+# Toda la salida de consola se guarda en logs/ y se sube como artifact, que es
+# la evidencia que se adjunta al entregable.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE: thomimunioz/iii-backend-coderhouse
+  VERSION: '1.0.0'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # ============================================================================
+  # 1. Tests funcionales sobre el runner (sin Docker)
+  # ============================================================================
+  tests:
+    name: Tests funcionales
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Registrar el entorno de ejecucion
+        run: |
+          mkdir -p logs
+          {
+            echo "# Entorno de ejecucion de las pruebas (GitHub Actions)"
+            echo "Sistema operativo: $(lsb_release -ds 2>/dev/null || uname -sr)"
+            echo "Node.js:           $(node -v)"
+            echo "npm:               $(npm -v)"
+            echo "Docker:            $(docker --version)"
+            echo "Commit:            ${GITHUB_SHA}"
+          } | tee logs/entorno.log
+
+      - name: Correr los 28 tests funcionales
+        run: npm test 2>&1 | tee logs/test.log
+
+      - name: Cobertura del router de adopciones
+        run: npm run test:coverage:adoption 2>&1 | tee logs/test-coverage-adoption.log
+
+      - name: Cobertura global
+        run: npm run test:coverage 2>&1 | tee logs/test-coverage-global.log
+
+      - name: Auditoria de dependencias de produccion
+        run: npm audit --omit=dev 2>&1 | tee logs/npm-audit-produccion.log
+        continue-on-error: true
+
+      - name: Guardar los logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-tests
+          path: logs/
+
+  # ============================================================================
+  # 2. Imagen Docker: build, ejecucion real, publicacion y escaneo
+  # ============================================================================
+  docker:
+    name: Imagen Docker
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar que existan las credenciales de DockerHub
+        env:
+          TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          USUARIO: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$USUARIO" ]; then
+            echo "::error::Faltan los secrets DOCKERHUB_USERNAME y/o DOCKERHUB_TOKEN."
+            echo "Crearlos en: Settings > Secrets and variables > Actions > New repository secret"
+            exit 1
+          fi
+          echo "Credenciales de DockerHub presentes."
+
+      - name: Correr los tests DENTRO de la imagen (etapa test del Dockerfile)
+        run: |
+          mkdir -p logs
+          docker build --target test --progress=plain -t adoptme-tests . 2>&1 \
+            | tee logs/docker-test-target.log
+
+      - name: Construir la imagen final
+        run: |
+          docker build --progress=plain -t "$IMAGE:$VERSION" . 2>&1 \
+            | tee logs/docker-build.log
+          docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+
+      - name: Datos de la imagen construida
+        run: |
+          {
+            echo "=============================================================="
+            echo " docker images $IMAGE"
+            echo "=============================================================="
+            docker images "$IMAGE"
+            echo
+            echo "=============================================================="
+            echo " Metadatos (docker inspect)"
+            echo "=============================================================="
+            echo "Tags:         $(docker inspect --format '{{.RepoTags}}' "$IMAGE:$VERSION")"
+            echo "Arquitectura: $(docker inspect --format '{{.Architecture}}/{{.Os}}' "$IMAGE:$VERSION")"
+            echo "Usuario:      $(docker inspect --format '{{.Config.User}}' "$IMAGE:$VERSION")"
+            echo "Puerto:       $(docker inspect --format '{{range $p, $v := .Config.ExposedPorts}}{{$p}}{{end}}' "$IMAGE:$VERSION")"
+            echo "Comando:      $(docker inspect --format '{{.Config.Cmd}}' "$IMAGE:$VERSION")"
+            echo "Tamano:       $(docker inspect --format '{{.Size}}' "$IMAGE:$VERSION") bytes"
+            echo "Capas:        $(docker inspect --format '{{len .RootFS.Layers}}' "$IMAGE:$VERSION")"
+            echo
+            echo "=============================================================="
+            echo " Capas de la imagen (docker history)"
+            echo "=============================================================="
+            docker history "$IMAGE:$VERSION" --no-trunc --format 'table {{.Size}}\t{{.CreatedBy}}' | head -25
+          } 2>&1 | tee logs/docker-imagen.log
+
+      - name: Levantar MongoDB y la aplicacion en contenedores
+        run: |
+          {
+            echo "=============================================================="
+            echo " Red y contenedores"
+            echo "=============================================================="
+            docker network create adoptme-net
+            docker run -d --name adoptme-mongo --network adoptme-net mongo:7
+            docker run -d --name adoptme --network adoptme-net -p 8080:8080 \
+              -e MONGODB_URI="mongodb://adoptme-mongo:27017/adoptme" \
+              -e SECRET_KEY="clave-de-prueba-para-integracion-continua" \
+              "$IMAGE:$VERSION"
+
+            echo
+            echo "Esperando a que el contenedor quede healthy..."
+            for i in $(seq 1 30); do
+              estado=$(docker inspect --format '{{.State.Health.Status}}' adoptme 2>/dev/null || echo "sin healthcheck")
+              if [ "$estado" = "healthy" ]; then
+                echo "Contenedor healthy despues de ${i} intentos"
+                break
+              fi
+              sleep 2
+            done
+
+            echo
+            echo "=============================================================="
+            echo " docker ps"
+            echo "=============================================================="
+            docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+
+            echo
+            echo "=============================================================="
+            echo " Logs de arranque de la aplicacion (docker logs adoptme)"
+            echo "=============================================================="
+            docker logs adoptme
+
+            echo
+            echo "=============================================================="
+            echo " El proceso NO corre como root (docker exec adoptme id)"
+            echo "=============================================================="
+            docker exec adoptme id
+          } 2>&1 | tee logs/docker-run.log
+
+      - name: Verificar la API dentro del contenedor
+        run: |
+          {
+            echo "=============================================================="
+            echo " Verificacion de endpoints contra el contenedor"
+            echo "=============================================================="
+
+            echo "--- GET /api/health"
+            curl -s http://localhost:8080/api/health; echo
+
+            echo "--- GET /api/adoptions (vacio al inicio)"
+            curl -s http://localhost:8080/api/adoptions; echo
+
+            echo "--- POST /api/mocks/generateData?users=3&pets=5"
+            curl -s -X POST "http://localhost:8080/api/mocks/generateData?users=3&pets=5"; echo
+
+            USER_ID=$(curl -s http://localhost:8080/api/users | jq -r '.payload[0]._id')
+            PET_ID=$(curl -s http://localhost:8080/api/pets | jq -r '.payload[0]._id')
+            echo "--- Usuario de prueba: $USER_ID"
+            echo "--- Mascota de prueba: $PET_ID"
+
+            echo "--- POST /api/adoptions/\$USER_ID/\$PET_ID (adopcion exitosa)"
+            curl -s -w "\nHTTP %{http_code}\n" -X POST "http://localhost:8080/api/adoptions/$USER_ID/$PET_ID"
+
+            echo "--- GET /api/adoptions (ya tiene la adopcion registrada)"
+            curl -s http://localhost:8080/api/adoptions; echo
+
+            echo "--- POST de la MISMA mascota otra vez (debe dar 400)"
+            curl -s -w "\nHTTP %{http_code}\n" -X POST "http://localhost:8080/api/adoptions/$USER_ID/$PET_ID"
+
+            echo "--- GET /api/adoptions/000000000000000000000000 (inexistente, debe dar 404)"
+            curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/api/adoptions/000000000000000000000000
+
+            echo "--- GET /api/adoptions/id-invalido (debe dar 400)"
+            curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/api/adoptions/id-invalido
+
+            echo "--- GET /api/docs (documentacion OpenAPI)"
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8080/api/docs/
+          } 2>&1 | tee logs/verificacion-endpoints.log
+
+      - name: Apagado ordenado del contenedor
+        run: |
+          {
+            echo "--- docker stop adoptme (envia SIGTERM)"
+            docker stop adoptme
+            echo "--- Logs finales: se ve el cierre ordenado (SIGTERM recibido)"
+            docker logs --tail 5 adoptme
+          } 2>&1 | tee -a logs/docker-run.log
+
+      - name: Iniciar sesion en DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publicar la imagen
+        run: |
+          {
+            docker push "$IMAGE:$VERSION"
+            docker push "$IMAGE:latest"
+            echo
+            echo "Imagen publicada: https://hub.docker.com/r/$IMAGE"
+          } 2>&1 | tee -a logs/docker-imagen.log
+
+      - name: Instalar Docker Scout
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+          sh install-scout.sh
+        continue-on-error: true
+
+      - name: Escaneo de seguridad con Docker Scout
+        run: |
+          {
+            echo "=============================================================="
+            echo " docker scout quickview $IMAGE:$VERSION"
+            echo "=============================================================="
+            docker scout quickview "$IMAGE:$VERSION"
+            echo
+            echo "=============================================================="
+            echo " Vulnerabilidades criticas y altas"
+            echo "=============================================================="
+            docker scout cves --only-severity critical,high "$IMAGE:$VERSION"
+          } 2>&1 | tee logs/docker-scout.log
+        continue-on-error: true
+
+      - name: Escaneo de seguridad con Trivy (segunda opinion)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ env.VERSION }}
+          format: 'table'
+          output: 'logs/trivy.log'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+      - name: Guardar los logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-docker
+          path: logs/

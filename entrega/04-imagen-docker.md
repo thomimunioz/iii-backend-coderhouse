@@ -4,11 +4,11 @@
 
 | Dato | Valor |
 |---|---|
-| Repositorio en DockerHub | `thomimunioz/adoptme-backend3` |
+| Repositorio en DockerHub | `thomimunioz/iii-backend-coderhouse` |
 | Tag de versión | `1.0.0` |
 | Tag móvil | `latest` |
-| Referencia completa | `thomimunioz/adoptme-backend3:1.0.0` |
-| URL pública | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
+| Referencia completa | `thomimunioz/iii-backend-coderhouse:1.0.0` |
+| URL pública | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
 | Imagen base | `node:22-alpine` |
 | Puerto expuesto | `8080` |
 | Usuario de ejecución | `node` (uid 1000, no-root) |
@@ -21,8 +21,8 @@ Se publican **dos tags apuntando a la misma imagen**:
 - **`latest`** — tag móvil, cómodo para probar rápido. No sirve para producción: cambia con cada publicación, y quien haga `docker pull` en dos momentos distintos puede recibir imágenes diferentes.
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ## Evidencia de que la imagen fue construida correctamente
@@ -30,8 +30,8 @@ docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:lates
 Log completo del build en la sección 3. Verificación del artefacto generado:
 
 ```bash
-docker images thomimunioz/adoptme-backend3
-docker history thomimunioz/adoptme-backend3:1.0.0
+docker images thomimunioz/iii-backend-coderhouse
+docker history thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 {{LOG:entrega/logs/docker-imagen.log}}
@@ -39,7 +39,7 @@ docker history thomimunioz/adoptme-backend3:1.0.0
 ## Evidencia de ejecución del contenedor
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 docker ps
 docker logs adoptme
 curl http://localhost:8080/api/health
@@ -62,8 +62,8 @@ En `docker ps`, la columna `STATUS` debe pasar de `health: starting` a `(healthy
 
 ```bash
 docker login
-docker push thomimunioz/adoptme-backend3:1.0.0
-docker push thomimunioz/adoptme-backend3:latest
+docker push thomimunioz/iii-backend-coderhouse:1.0.0
+docker push thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ### Manejo de credenciales
@@ -79,8 +79,8 @@ El token no se versiona ni queda en el historial de comandos: se ingresa cuando 
 ## Escaneo básico de seguridad
 
 ```bash
-docker scout quickview thomimunioz/adoptme-backend3:1.0.0
-docker scout cves --only-severity critical,high thomimunioz/adoptme-backend3:1.0.0
+docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
+docker scout cves --only-severity critical,high thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 {{LOG:entrega/logs/docker-scout.log}}

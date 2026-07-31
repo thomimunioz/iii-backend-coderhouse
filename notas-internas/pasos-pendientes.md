@@ -24,7 +24,7 @@ Nota interna: no forma parte del entregable.
 ## 1. Confirmar el usuario de DockerHub
 
 Toda la documentación asume `thomimunioz` como usuario de DockerHub y la imagen
-`thomimunioz/adoptme-backend3`. **Si tu usuario de DockerHub es distinto**, hay que cambiarlo en
+`thomimunioz/iii-backend-coderhouse`. **Si tu usuario de DockerHub es distinto**, hay que cambiarlo en
 cuatro lugares:
 
 ```
@@ -44,17 +44,17 @@ Con Docker Desktop abierto, desde `G:\Thomi - Mi Carpeta\CODERHOUSE\backend-3_co
 
 ```powershell
 # --- Build ---
-docker build -t thomimunioz/adoptme-backend3:1.0.0 . 2>&1 | Tee-Object entrega\logs\docker-build.log
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 . 2>&1 | Tee-Object entrega\logs\docker-build.log
 
 # --- Tests dentro de la imagen ---
 docker build --target test -t adoptme-tests . 2>&1 | Tee-Object entrega\logs\docker-test-target.log
 
 # --- Tamaño y capas de la imagen ---
-docker images thomimunioz/adoptme-backend3 | Tee-Object entrega\logs\docker-imagen.log
-docker history thomimunioz/adoptme-backend3:1.0.0 | Tee-Object -Append entrega\logs\docker-imagen.log
+docker images thomimunioz/iii-backend-coderhouse | Tee-Object entrega\logs\docker-imagen.log
+docker history thomimunioz/iii-backend-coderhouse:1.0.0 | Tee-Object -Append entrega\logs\docker-imagen.log
 
 # --- Correr el contenedor ---
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 Start-Sleep -Seconds 20
 docker ps | Tee-Object entrega\logs\docker-run.log
 docker logs adoptme 2>&1 | Tee-Object -Append entrega\logs\docker-run.log
@@ -65,14 +65,14 @@ curl.exe http://localhost:8080/api/adoptions | Tee-Object -Append entrega\logs\d
 docker exec adoptme id | Tee-Object -Append entrega\logs\docker-run.log
 
 # --- Tag y push ---
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 docker login -u thomimunioz
-docker push thomimunioz/adoptme-backend3:1.0.0 2>&1 | Tee-Object -Append entrega\logs\docker-imagen.log
-docker push thomimunioz/adoptme-backend3:latest 2>&1 | Tee-Object -Append entrega\logs\docker-imagen.log
+docker push thomimunioz/iii-backend-coderhouse:1.0.0 2>&1 | Tee-Object -Append entrega\logs\docker-imagen.log
+docker push thomimunioz/iii-backend-coderhouse:latest 2>&1 | Tee-Object -Append entrega\logs\docker-imagen.log
 
 # --- Escaneo de seguridad ---
-docker scout quickview thomimunioz/adoptme-backend3:1.0.0 2>&1 | Tee-Object entrega\logs\docker-scout.log
-docker scout cves --only-severity critical,high thomimunioz/adoptme-backend3:1.0.0 2>&1 | Tee-Object -Append entrega\logs\docker-scout.log
+docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0 2>&1 | Tee-Object entrega\logs\docker-scout.log
+docker scout cves --only-severity critical,high thomimunioz/iii-backend-coderhouse:1.0.0 2>&1 | Tee-Object -Append entrega\logs\docker-scout.log
 
 # --- Limpieza ---
 docker stop adoptme

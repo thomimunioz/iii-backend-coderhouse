@@ -106,14 +106,14 @@ curl -X POST http://localhost:8080/api/adoptions/<uid>/<pid>
 Desde la raíz del proyecto (donde está el `Dockerfile`):
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 Verificar el resultado:
 
 ```bash
-docker images thomimunioz/adoptme-backend3
+docker images thomimunioz/iii-backend-coderhouse
 ```
 
 ### B.2 Ejecutar el contenedor
@@ -121,7 +121,7 @@ docker images thomimunioz/adoptme-backend3
 **Opción 1 — con el archivo `.env`:**
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 **Opción 2 — con variables explícitas:**
@@ -131,8 +131,28 @@ docker run -d --name adoptme -p 8080:8080 \
   -e NODE_ENV=production \
   -e MONGODB_URI="mongodb+srv://USUARIO:PASSWORD@CLUSTER.mongodb.net/adoptme" \
   -e SECRET_KEY="una-clave-larga-y-aleatoria" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
+
+**Opción 3 — con MongoDB también en un contenedor (recomendada para reproducir el proyecto):**
+
+No requiere cuenta de Atlas ni instalar MongoDB. Los dos contenedores se comunican por una red propia de Docker, donde cada uno resuelve al otro por su nombre:
+
+```bash
+# 1. Red privada para que los contenedores se vean entre sí
+docker network create adoptme-net
+
+# 2. Base de datos
+docker run -d --name adoptme-mongo --network adoptme-net -p 27017:27017 mongo:7
+
+# 3. Aplicación, apuntando a la base por el nombre del contenedor
+docker run -d --name adoptme --network adoptme-net -p 8080:8080 \
+  -e MONGODB_URI="mongodb://adoptme-mongo:27017/adoptme" \
+  -e SECRET_KEY="clave-de-prueba-para-el-entorno-local" \
+  thomimunioz/iii-backend-coderhouse:1.0.0
+```
+
+El host `adoptme-mongo` de la URI es el nombre del contenedor de la base: Docker lo resuelve por DNS interno dentro de `adoptme-net`. Notar que la URI usa `mongodb://` y no `mongodb+srv://`, porque no hay registros SRV que resolver.
 
 **Importante:** si MongoDB corre en el host (no en un contenedor), dentro del contenedor `localhost` apunta al propio contenedor, no a la máquina. Hay que usar `host.docker.internal`:
 
@@ -161,10 +181,10 @@ docker exec -it adoptme sh                 # entrar al contenedor
 Sin clonar el repositorio:
 
 ```bash
-docker pull thomimunioz/adoptme-backend3:1.0.0
+docker pull thomimunioz/iii-backend-coderhouse:1.0.0
 docker run -d --name adoptme -p 8080:8080 \
   -e MONGODB_URI="<tu-uri-de-mongo>" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ### B.5 Detener y limpiar
@@ -172,7 +192,11 @@ docker run -d --name adoptme -p 8080:8080 \
 ```bash
 docker stop adoptme          # SIGTERM: el proceso cierra ordenadamente
 docker rm adoptme
-docker rmi thomimunioz/adoptme-backend3:1.0.0
+docker rmi thomimunioz/iii-backend-coderhouse:1.0.0
+
+# Si se usó la opción 3 (MongoDB en contenedor), limpiar también:
+docker stop adoptme-mongo && docker rm adoptme-mongo
+docker network rm adoptme-net
 ```
 
 ---

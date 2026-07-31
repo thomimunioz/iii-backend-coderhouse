@@ -151,7 +151,7 @@ que cierran el servidor HTTP, esperan a que terminen las requests en curso, cier
 Comando:
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 ```
 
 {{LOG:entrega/logs/docker-build.log}}

@@ -32,8 +32,8 @@ const DATOS = {
     curso: 'Backend III — Coderhouse',
     alumno: 'Thomas Muñoz',
     repositorio: 'https://github.com/thomimunioz/iii-backend-coderhouse',
-    dockerhub: 'https://hub.docker.com/r/thomimunioz/adoptme-backend3',
-    imagen: 'thomimunioz/adoptme-backend3:1.0.0'
+    dockerhub: 'https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse',
+    imagen: 'thomimunioz/iii-backend-coderhouse:1.0.0'
 }
 
 const LENGUAJE_POR_EXTENSION = {
