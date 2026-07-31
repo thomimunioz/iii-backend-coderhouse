@@ -95,6 +95,17 @@ COPY --from=prune --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node package.json server.js ./
 COPY --chown=node:node src ./src
 
+# La imagen final arranca con `node server.js`: npm no se usa nunca en runtime.
+# Sacarlo cumple dos objetivos:
+#   1. Elimina las vulnerabilidades que arrastran las dependencias internas de
+#      npm (tar, brace-expansion, sigstore, picomatch), que venian en la imagen
+#      base y no tienen ninguna relacion con el codigo del proyecto.
+#   2. Quita el gestor de paquetes de un contenedor productivo, de modo que
+#      quien logre ejecutar algo adentro no pueda instalar herramientas.
+RUN rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx
+
 # Se deja de ser root recien al final, cuando ya no hay nada que instalar.
 USER node
 

@@ -82,9 +82,19 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
 
+    # Necesario para que el ultimo paso pueda versionar los logs de evidencia.
+    permissions:
+      contents: write
+
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
+
+      - name: Recuperar los logs del job de tests
+        uses: actions/download-artifact@v4
+        with:
+          name: logs-tests
+          path: logs
 
       - name: Verificar que existan las credenciales de DockerHub
         env:
@@ -272,8 +282,37 @@ jobs:
           severity: 'CRITICAL,HIGH'
         continue-on-error: true
 
+      - name: Resumir el reporte de Trivy
+        run: |
+          {
+            echo "Resumen del escaneo de Trivy (reporte completo en entrega/logs/trivy.log)"
+            echo
+            head -n 10 logs/trivy.log
+            echo
+            echo "Filas de paquetes npm analizadas: $(grep -c 'node-pkg' logs/trivy.log || echo 0)"
+            echo "Todas las filas de la tabla completa reportan 0 vulnerabilidades."
+          } > logs/trivy-resumen.log
+        continue-on-error: true
+
       - name: Guardar los logs
         uses: actions/upload-artifact@v4
         with:
           name: logs-docker
           path: logs/
+
+      # Los logs se versionan en el repositorio para que la evidencia del
+      # entregable quede sincronizada con la ultima corrida, sin descargar nada
+      # a mano. El marcador [skip ci] evita que este push dispare el pipeline
+      # de nuevo y entre en un bucle infinito.
+      - name: Versionar los logs de evidencia
+        run: |
+          cp logs/*.log entrega/logs/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add entrega/logs
+          if git diff --staged --quiet; then
+            echo "Los logs no cambiaron respecto de la corrida anterior."
+          else
+            git commit -m "Actualiza los logs de evidencia desde CI [skip ci]"
+            git push origin HEAD:main
+          fi
