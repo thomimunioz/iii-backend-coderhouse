@@ -9,8 +9,8 @@
 | Recurso | URL |
 |---|---|
 | Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
-| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
-| Imagen y tag | `thomimunioz/adoptme-backend3:1.0.0` |
+| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
+| Imagen y tag | `thomimunioz/iii-backend-coderhouse:1.0.0` |
 
 Este documento reúne toda la evidencia del entregable final: estructura del proyecto, tests
 funcionales del router de adopciones con su código completo y sus logs de ejecución,
@@ -1086,7 +1086,7 @@ Las dependencias de producción son las únicas que llegan a la imagen Docker: *
 #  ni devDependencies, ni documentacion de la entrega.
 #
 #  Comandos utiles:
-#    docker build -t thomimunioz/adoptme-backend3:1.0.0 .
+#    docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 #    docker build --target test .        -> corre los 28 tests dentro de la imagen
 # ==============================================================================
 
@@ -1357,12 +1357,323 @@ que cierran el servidor HTTP, esperan a que terminen las requests en curso, cier
 | `HEALTHCHECK` | Estado del servicio observable sin instalar dependencias extra |
 | `CMD` exec + handlers de señales | `docker stop` cierra la app de forma ordenada |
 
+## Integración continua: dónde se construye la imagen
+
+La construcción, la prueba y la publicación de la imagen están automatizadas en un pipeline de **GitHub Actions** definido en `.github/workflows/docker.yml`. El pipeline se dispara en cada push a `main` y ejecuta exactamente los mismos comandos que se documentan para correr a mano en la sección 5.
+
+```yaml
+name: Tests, imagen Docker y publicacion en DockerHub
+
+# Pipeline de integracion continua del Proyecto Final de Backend III.
+#
+# Hace, en la nube, exactamente lo mismo que se documenta para hacer a mano en
+# el README: corre los tests, construye la imagen, la levanta junto a MongoDB,
+# verifica que la API responda, la publica en DockerHub y la escanea.
+#
+# Toda la salida de consola se guarda en logs/ y se sube como artifact, que es
+# la evidencia que se adjunta al entregable.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE: thomimunioz/iii-backend-coderhouse
+  VERSION: '1.0.0'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # ============================================================================
+  # 1. Tests funcionales sobre el runner (sin Docker)
+  # ============================================================================
+  tests:
+    name: Tests funcionales
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Registrar el entorno de ejecucion
+        run: |
+          mkdir -p logs
+          {
+            echo "# Entorno de ejecucion de las pruebas (GitHub Actions)"
+            echo "Sistema operativo: $(lsb_release -ds 2>/dev/null || uname -sr)"
+            echo "Node.js:           $(node -v)"
+            echo "npm:               $(npm -v)"
+            echo "Docker:            $(docker --version)"
+            echo "Commit:            ${GITHUB_SHA}"
+          } | tee logs/entorno.log
+
+      - name: Correr los 28 tests funcionales
+        run: npm test 2>&1 | tee logs/test.log
+
+      - name: Cobertura del router de adopciones
+        run: npm run test:coverage:adoption 2>&1 | tee logs/test-coverage-adoption.log
+
+      - name: Cobertura global
+        run: npm run test:coverage 2>&1 | tee logs/test-coverage-global.log
+
+      - name: Auditoria de dependencias de produccion
+        run: npm audit --omit=dev 2>&1 | tee logs/npm-audit-produccion.log
+        continue-on-error: true
+
+      - name: Guardar los logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-tests
+          path: logs/
+
+  # ============================================================================
+  # 2. Imagen Docker: build, ejecucion real, publicacion y escaneo
+  # ============================================================================
+  docker:
+    name: Imagen Docker
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar que existan las credenciales de DockerHub
+        env:
+          TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          USUARIO: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$USUARIO" ]; then
+            echo "::error::Faltan los secrets DOCKERHUB_USERNAME y/o DOCKERHUB_TOKEN."
+            echo "Crearlos en: Settings > Secrets and variables > Actions > New repository secret"
+            exit 1
+          fi
+          echo "Credenciales de DockerHub presentes."
+
+      - name: Correr los tests DENTRO de la imagen (etapa test del Dockerfile)
+        run: |
+          mkdir -p logs
+          docker build --target test --progress=plain -t adoptme-tests . 2>&1 \
+            | tee logs/docker-test-target.log
+
+      - name: Construir la imagen final
+        run: |
+          docker build --progress=plain -t "$IMAGE:$VERSION" . 2>&1 \
+            | tee logs/docker-build.log
+          docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+
+      - name: Datos de la imagen construida
+        run: |
+          {
+            echo "=============================================================="
+            echo " docker images $IMAGE"
+            echo "=============================================================="
+            docker images "$IMAGE"
+            echo
+            echo "=============================================================="
+            echo " Metadatos (docker inspect)"
+            echo "=============================================================="
+            echo "Tags:         $(docker inspect --format '{{.RepoTags}}' "$IMAGE:$VERSION")"
+            echo "Arquitectura: $(docker inspect --format '{{.Architecture}}/{{.Os}}' "$IMAGE:$VERSION")"
+            echo "Usuario:      $(docker inspect --format '{{.Config.User}}' "$IMAGE:$VERSION")"
+            echo "Puerto:       $(docker inspect --format '{{range $p, $v := .Config.ExposedPorts}}{{$p}}{{end}}' "$IMAGE:$VERSION")"
+            echo "Comando:      $(docker inspect --format '{{.Config.Cmd}}' "$IMAGE:$VERSION")"
+            echo "Tamano:       $(docker inspect --format '{{.Size}}' "$IMAGE:$VERSION") bytes"
+            echo "Capas:        $(docker inspect --format '{{len .RootFS.Layers}}' "$IMAGE:$VERSION")"
+            echo
+            echo "=============================================================="
+            echo " Capas de la imagen (docker history)"
+            echo "=============================================================="
+            docker history "$IMAGE:$VERSION" --no-trunc --format 'table {{.Size}}\t{{.CreatedBy}}' | head -25
+          } 2>&1 | tee logs/docker-imagen.log
+
+      - name: Levantar MongoDB y la aplicacion en contenedores
+        run: |
+          {
+            echo "=============================================================="
+            echo " Red y contenedores"
+            echo "=============================================================="
+            docker network create adoptme-net
+            docker run -d --name adoptme-mongo --network adoptme-net mongo:7
+            docker run -d --name adoptme --network adoptme-net -p 8080:8080 \
+              -e MONGODB_URI="mongodb://adoptme-mongo:27017/adoptme" \
+              -e SECRET_KEY="clave-de-prueba-para-integracion-continua" \
+              "$IMAGE:$VERSION"
+
+            echo
+            echo "Esperando a que el contenedor quede healthy..."
+            for i in $(seq 1 30); do
+              estado=$(docker inspect --format '{{.State.Health.Status}}' adoptme 2>/dev/null || echo "sin healthcheck")
+              if [ "$estado" = "healthy" ]; then
+                echo "Contenedor healthy despues de ${i} intentos"
+                break
+              fi
+              sleep 2
+            done
+
+            echo
+            echo "=============================================================="
+            echo " docker ps"
+            echo "=============================================================="
+            docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+
+            echo
+            echo "=============================================================="
+            echo " Logs de arranque de la aplicacion (docker logs adoptme)"
+            echo "=============================================================="
+            docker logs adoptme
+
+            echo
+            echo "=============================================================="
+            echo " El proceso NO corre como root (docker exec adoptme id)"
+            echo "=============================================================="
+            docker exec adoptme id
+          } 2>&1 | tee logs/docker-run.log
+
+      - name: Verificar la API dentro del contenedor
+        run: |
+          {
+            echo "=============================================================="
+            echo " Verificacion de endpoints contra el contenedor"
+            echo "=============================================================="
+
+            echo "--- GET /api/health"
+            curl -s http://localhost:8080/api/health; echo
+
+            echo "--- GET /api/adoptions (vacio al inicio)"
+            curl -s http://localhost:8080/api/adoptions; echo
+
+            echo "--- POST /api/mocks/generateData?users=3&pets=5"
+            curl -s -X POST "http://localhost:8080/api/mocks/generateData?users=3&pets=5"; echo
+
+            USER_ID=$(curl -s http://localhost:8080/api/users | jq -r '.payload[0]._id')
+            PET_ID=$(curl -s http://localhost:8080/api/pets | jq -r '.payload[0]._id')
+            echo "--- Usuario de prueba: $USER_ID"
+            echo "--- Mascota de prueba: $PET_ID"
+
+            echo "--- POST /api/adoptions/\$USER_ID/\$PET_ID (adopcion exitosa)"
+            curl -s -w "\nHTTP %{http_code}\n" -X POST "http://localhost:8080/api/adoptions/$USER_ID/$PET_ID"
+
+            echo "--- GET /api/adoptions (ya tiene la adopcion registrada)"
+            curl -s http://localhost:8080/api/adoptions; echo
+
+            echo "--- POST de la MISMA mascota otra vez (debe dar 400)"
+            curl -s -w "\nHTTP %{http_code}\n" -X POST "http://localhost:8080/api/adoptions/$USER_ID/$PET_ID"
+
+            echo "--- GET /api/adoptions/000000000000000000000000 (inexistente, debe dar 404)"
+            curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/api/adoptions/000000000000000000000000
+
+            echo "--- GET /api/adoptions/id-invalido (debe dar 400)"
+            curl -s -w "\nHTTP %{http_code}\n" http://localhost:8080/api/adoptions/id-invalido
+
+            echo "--- GET /api/docs (documentacion OpenAPI)"
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8080/api/docs/
+          } 2>&1 | tee logs/verificacion-endpoints.log
+
+      - name: Apagado ordenado del contenedor
+        run: |
+          {
+            echo "--- docker stop adoptme (envia SIGTERM)"
+            docker stop adoptme
+            echo "--- Logs finales: se ve el cierre ordenado (SIGTERM recibido)"
+            docker logs --tail 5 adoptme
+          } 2>&1 | tee -a logs/docker-run.log
+
+      - name: Iniciar sesion en DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publicar la imagen
+        run: |
+          {
+            docker push "$IMAGE:$VERSION"
+            docker push "$IMAGE:latest"
+            echo
+            echo "Imagen publicada: https://hub.docker.com/r/$IMAGE"
+          } 2>&1 | tee -a logs/docker-imagen.log
+
+      - name: Instalar Docker Scout
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+          sh install-scout.sh
+        continue-on-error: true
+
+      - name: Escaneo de seguridad con Docker Scout
+        run: |
+          {
+            echo "=============================================================="
+            echo " docker scout quickview $IMAGE:$VERSION"
+            echo "=============================================================="
+            docker scout quickview "$IMAGE:$VERSION"
+            echo
+            echo "=============================================================="
+            echo " Vulnerabilidades criticas y altas"
+            echo "=============================================================="
+            docker scout cves --only-severity critical,high "$IMAGE:$VERSION"
+          } 2>&1 | tee logs/docker-scout.log
+        continue-on-error: true
+
+      - name: Escaneo de seguridad con Trivy (segunda opinion)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ env.VERSION }}
+          format: 'table'
+          output: 'logs/trivy.log'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+      - name: Guardar los logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-docker
+          path: logs/
+```
+
+### Por qué el build corre en CI y no en una máquina local
+
+| Motivo | Detalle |
+|---|---|
+| Reproducibilidad | El build parte siempre de un runner limpio de Ubuntu, sin caché ni configuración previa. Si funciona ahí, funciona en cualquier lado. |
+| Evidencia verificable | Los logs quedan publicados en el repositorio y son consultables por cualquiera, no dependen de una captura de pantalla. |
+| Puerta de calidad | La imagen se publica **solo si** los 28 tests pasan primero, tanto en el runner como dentro de la propia imagen (`--target test`). |
+| Independencia del hardware | No requiere virtualización habilitada ni Docker instalado localmente. |
+
+### Etapas del pipeline
+
+```
+Job 1: tests                          Job 2: docker (depende del job 1)
+  ├── npm ci                            ├── docker build --target test   (28 tests dentro de la imagen)
+  ├── npm test                          ├── docker build                 (imagen final)
+  ├── npm run test:coverage:adoption    ├── docker inspect / history     (metadatos y capas)
+  ├── npm run test:coverage             ├── docker run mongo + app       (ejecución real)
+  └── npm audit --omit=dev              ├── curl a los endpoints         (verificación funcional)
+                                        ├── docker stop                  (apagado ordenado)
+                                        ├── docker push                  (DockerHub, tags 1.0.0 y latest)
+                                        └── docker scout + trivy         (escaneo de seguridad)
+```
+
+Las credenciales de DockerHub nunca viajan en el repositorio: se guardan como *repository secrets* (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`) y el token es de tipo *personal access token* con permisos acotados de lectura y escritura, revocable sin cambiar la contraseña de la cuenta.
+
 ## Log de construcción de la imagen
 
-Comando:
+Comando ejecutado por el pipeline (idéntico al documentado para uso manual):
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
+docker build --progress=plain -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 ```
 
 ```text
@@ -1393,11 +1704,11 @@ PENDIENTE: pegar aca la salida de correr los tests dentro de la imagen
 
 | Dato | Valor |
 |---|---|
-| Repositorio en DockerHub | `thomimunioz/adoptme-backend3` |
+| Repositorio en DockerHub | `thomimunioz/iii-backend-coderhouse` |
 | Tag de versión | `1.0.0` |
 | Tag móvil | `latest` |
-| Referencia completa | `thomimunioz/adoptme-backend3:1.0.0` |
-| URL pública | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
+| Referencia completa | `thomimunioz/iii-backend-coderhouse:1.0.0` |
+| URL pública | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
 | Imagen base | `node:22-alpine` |
 | Puerto expuesto | `8080` |
 | Usuario de ejecución | `node` (uid 1000, no-root) |
@@ -1410,8 +1721,8 @@ Se publican **dos tags apuntando a la misma imagen**:
 - **`latest`** — tag móvil, cómodo para probar rápido. No sirve para producción: cambia con cada publicación, y quien haga `docker pull` en dos momentos distintos puede recibir imágenes diferentes.
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ## Evidencia de que la imagen fue construida correctamente
@@ -1419,8 +1730,8 @@ docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:lates
 Log completo del build en la sección 3. Verificación del artefacto generado:
 
 ```bash
-docker images thomimunioz/adoptme-backend3
-docker history thomimunioz/adoptme-backend3:1.0.0
+docker images thomimunioz/iii-backend-coderhouse
+docker history thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ```text
@@ -1434,7 +1745,7 @@ PENDIENTE: pegar aca la salida de
 ## Evidencia de ejecución del contenedor
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 docker ps
 docker logs adoptme
 curl http://localhost:8080/api/health
@@ -1465,8 +1776,8 @@ PENDIENTE: pegar aca la salida de
 
 ```bash
 docker login
-docker push thomimunioz/adoptme-backend3:1.0.0
-docker push thomimunioz/adoptme-backend3:latest
+docker push thomimunioz/iii-backend-coderhouse:1.0.0
+docker push thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ### Manejo de credenciales
@@ -1482,8 +1793,8 @@ El token no se versiona ni queda en el historial de comandos: se ingresa cuando 
 ## Escaneo básico de seguridad
 
 ```bash
-docker scout quickview thomimunioz/adoptme-backend3:1.0.0
-docker scout cves --only-severity critical,high thomimunioz/adoptme-backend3:1.0.0
+docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
+docker scout cves --only-severity critical,high thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ```text
@@ -1627,14 +1938,14 @@ curl -X POST http://localhost:8080/api/adoptions/<uid>/<pid>
 Desde la raíz del proyecto (donde está el `Dockerfile`):
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 Verificar el resultado:
 
 ```bash
-docker images thomimunioz/adoptme-backend3
+docker images thomimunioz/iii-backend-coderhouse
 ```
 
 ### B.2 Ejecutar el contenedor
@@ -1642,7 +1953,7 @@ docker images thomimunioz/adoptme-backend3
 **Opción 1 — con el archivo `.env`:**
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 **Opción 2 — con variables explícitas:**
@@ -1652,8 +1963,28 @@ docker run -d --name adoptme -p 8080:8080 \
   -e NODE_ENV=production \
   -e MONGODB_URI="mongodb+srv://USUARIO:PASSWORD@CLUSTER.mongodb.net/adoptme" \
   -e SECRET_KEY="una-clave-larga-y-aleatoria" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
+
+**Opción 3 — con MongoDB también en un contenedor (recomendada para reproducir el proyecto):**
+
+No requiere cuenta de Atlas ni instalar MongoDB. Los dos contenedores se comunican por una red propia de Docker, donde cada uno resuelve al otro por su nombre:
+
+```bash
+# 1. Red privada para que los contenedores se vean entre sí
+docker network create adoptme-net
+
+# 2. Base de datos
+docker run -d --name adoptme-mongo --network adoptme-net -p 27017:27017 mongo:7
+
+# 3. Aplicación, apuntando a la base por el nombre del contenedor
+docker run -d --name adoptme --network adoptme-net -p 8080:8080 \
+  -e MONGODB_URI="mongodb://adoptme-mongo:27017/adoptme" \
+  -e SECRET_KEY="clave-de-prueba-para-el-entorno-local" \
+  thomimunioz/iii-backend-coderhouse:1.0.0
+```
+
+El host `adoptme-mongo` de la URI es el nombre del contenedor de la base: Docker lo resuelve por DNS interno dentro de `adoptme-net`. Notar que la URI usa `mongodb://` y no `mongodb+srv://`, porque no hay registros SRV que resolver.
 
 **Importante:** si MongoDB corre en el host (no en un contenedor), dentro del contenedor `localhost` apunta al propio contenedor, no a la máquina. Hay que usar `host.docker.internal`:
 
@@ -1682,10 +2013,10 @@ docker exec -it adoptme sh                 # entrar al contenedor
 Sin clonar el repositorio:
 
 ```bash
-docker pull thomimunioz/adoptme-backend3:1.0.0
+docker pull thomimunioz/iii-backend-coderhouse:1.0.0
 docker run -d --name adoptme -p 8080:8080 \
   -e MONGODB_URI="<tu-uri-de-mongo>" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ### B.5 Detener y limpiar
@@ -1693,7 +2024,11 @@ docker run -d --name adoptme -p 8080:8080 \
 ```bash
 docker stop adoptme          # SIGTERM: el proceso cierra ordenadamente
 docker rm adoptme
-docker rmi thomimunioz/adoptme-backend3:1.0.0
+docker rmi thomimunioz/iii-backend-coderhouse:1.0.0
+
+# Si se usó la opción 3 (MongoDB en contenedor), limpiar también:
+docker stop adoptme-mongo && docker rm adoptme-mongo
+docker network rm adoptme-net
 ```
 
 ---
@@ -1927,6 +2262,8 @@ El `README.md` del repositorio es la puerta de entrada al proyecto y está pensa
 ````markdown
 # AdoptMe API — Proyecto Final Backend III (Coderhouse)
 
+[![Tests, imagen Docker y publicación en DockerHub](https://github.com/thomimunioz/iii-backend-coderhouse/actions/workflows/docker.yml/badge.svg)](https://github.com/thomimunioz/iii-backend-coderhouse/actions/workflows/docker.yml)
+
 API REST de adopción de mascotas construida con Node.js, Express 5 y MongoDB.
 Este entregable final agrega sobre el proyecto base:
 
@@ -1934,6 +2271,7 @@ Este entregable final agrega sobre el proyecto base:
 - **Imagen Docker optimizada** multi-stage, ejecutada con usuario no-root y con `HEALTHCHECK`.
 - **Documentación interactiva** OpenAPI 3.0 servida en `/api/docs`.
 - **Módulo de mocking** con `@faker-js/faker` para generar datos de prueba.
+- **Pipeline de CI** que construye, prueba, publica y escanea la imagen en cada push.
 
 ---
 
@@ -1942,8 +2280,9 @@ Este entregable final agrega sobre el proyecto base:
 | Recurso | URL |
 |---|---|
 | Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
-| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/adoptme-backend3 |
-| Imagen y tag | `thomimunioz/adoptme-backend3:1.0.0` |
+| Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
+| Imagen y tag | `thomimunioz/iii-backend-coderhouse:1.0.0` |
+| Pipeline de CI/CD | https://github.com/thomimunioz/iii-backend-coderhouse/actions |
 | Documentación de la API (local) | http://localhost:8080/api/docs |
 
 ---
@@ -2206,14 +2545,14 @@ El módulo de adopciones queda con **100% de statements, líneas y funciones**. 
 ### Construir la imagen
 
 ```bash
-docker build -t thomimunioz/adoptme-backend3:1.0.0 .
-docker tag thomimunioz/adoptme-backend3:1.0.0 thomimunioz/adoptme-backend3:latest
+docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker tag thomimunioz/iii-backend-coderhouse:1.0.0 thomimunioz/iii-backend-coderhouse:latest
 ```
 
 ### Correr el contenedor
 
 ```bash
-docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/adoptme-backend3:1.0.0
+docker run -d --name adoptme -p 8080:8080 --env-file .env thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 Con MongoDB local en el host, la URI del `.env` debe apuntar a `host.docker.internal`:
@@ -2222,7 +2561,7 @@ Con MongoDB local en el host, la URI del `.env` debe apuntar a `host.docker.inte
 docker run -d --name adoptme -p 8080:8080 \
   -e MONGODB_URI="mongodb://host.docker.internal:27017/adoptme" \
   -e SECRET_KEY="una-clave-larga-y-aleatoria" \
-  thomimunioz/adoptme-backend3:1.0.0
+  thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 Verificar que la aplicación responde dentro del contenedor:
@@ -2266,7 +2605,7 @@ docker build --target test -t adoptme-tests .
 
 ### Log de construcción
 
-<!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/adoptme-backend3:1.0.0 .` -->
+<!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .` -->
 
 ### Log de ejecución del contenedor
 
@@ -2276,26 +2615,26 @@ docker build --target test -t adoptme-tests .
 
 ## DockerHub
 
-Imagen pública: **https://hub.docker.com/r/thomimunioz/adoptme-backend3**
+Imagen pública: **https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse**
 
 ```bash
 docker login
-docker push thomimunioz/adoptme-backend3:1.0.0
-docker push thomimunioz/adoptme-backend3:latest
+docker push thomimunioz/iii-backend-coderhouse:1.0.0
+docker push thomimunioz/iii-backend-coderhouse:latest
 ```
 
 Para usarla sin clonar el repositorio:
 
 ```bash
-docker pull thomimunioz/adoptme-backend3:1.0.0
-docker run -d -p 8080:8080 -e MONGODB_URI="<tu-uri>" thomimunioz/adoptme-backend3:1.0.0
+docker pull thomimunioz/iii-backend-coderhouse:1.0.0
+docker run -d -p 8080:8080 -e MONGODB_URI="<tu-uri>" thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
 ### Escaneo de seguridad
 
 ```bash
-docker scout quickview thomimunioz/adoptme-backend3:1.0.0
-docker scout cves thomimunioz/adoptme-backend3:1.0.0
+docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
+docker scout cves thomimunioz/iii-backend-coderhouse:1.0.0
 npm audit --omit=dev
 ```
 

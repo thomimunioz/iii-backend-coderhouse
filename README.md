@@ -1,5 +1,7 @@
 # AdoptMe API — Proyecto Final Backend III (Coderhouse)
 
+[![Tests, imagen Docker y publicación en DockerHub](https://github.com/thomimunioz/iii-backend-coderhouse/actions/workflows/docker.yml/badge.svg)](https://github.com/thomimunioz/iii-backend-coderhouse/actions/workflows/docker.yml)
+
 API REST de adopción de mascotas construida con Node.js, Express 5 y MongoDB.
 Este entregable final agrega sobre el proyecto base:
 
@@ -7,6 +9,7 @@ Este entregable final agrega sobre el proyecto base:
 - **Imagen Docker optimizada** multi-stage, ejecutada con usuario no-root y con `HEALTHCHECK`.
 - **Documentación interactiva** OpenAPI 3.0 servida en `/api/docs`.
 - **Módulo de mocking** con `@faker-js/faker` para generar datos de prueba.
+- **Pipeline de CI** que construye, prueba, publica y escanea la imagen en cada push.
 
 ---
 
@@ -17,6 +20,7 @@ Este entregable final agrega sobre el proyecto base:
 | Repositorio (tests + Dockerfile) | https://github.com/thomimunioz/iii-backend-coderhouse |
 | Imagen pública en DockerHub | https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse |
 | Imagen y tag | `thomimunioz/iii-backend-coderhouse:1.0.0` |
+| Pipeline de CI/CD | https://github.com/thomimunioz/iii-backend-coderhouse/actions |
 | Documentación de la API (local) | http://localhost:8080/api/docs |
 
 ---

@@ -146,12 +146,43 @@ que cierran el servidor HTTP, esperan a que terminen las requests en curso, cier
 | `HEALTHCHECK` | Estado del servicio observable sin instalar dependencias extra |
 | `CMD` exec + handlers de señales | `docker stop` cierra la app de forma ordenada |
 
+## Integración continua: dónde se construye la imagen
+
+La construcción, la prueba y la publicación de la imagen están automatizadas en un pipeline de **GitHub Actions** definido en `.github/workflows/docker.yml`. El pipeline se dispara en cada push a `main` y ejecuta exactamente los mismos comandos que se documentan para correr a mano en la sección 5.
+
+{{ARCHIVO:.github/workflows/docker.yml}}
+
+### Por qué el build corre en CI y no en una máquina local
+
+| Motivo | Detalle |
+|---|---|
+| Reproducibilidad | El build parte siempre de un runner limpio de Ubuntu, sin caché ni configuración previa. Si funciona ahí, funciona en cualquier lado. |
+| Evidencia verificable | Los logs quedan publicados en el repositorio y son consultables por cualquiera, no dependen de una captura de pantalla. |
+| Puerta de calidad | La imagen se publica **solo si** los 28 tests pasan primero, tanto en el runner como dentro de la propia imagen (`--target test`). |
+| Independencia del hardware | No requiere virtualización habilitada ni Docker instalado localmente. |
+
+### Etapas del pipeline
+
+```
+Job 1: tests                          Job 2: docker (depende del job 1)
+  ├── npm ci                            ├── docker build --target test   (28 tests dentro de la imagen)
+  ├── npm test                          ├── docker build                 (imagen final)
+  ├── npm run test:coverage:adoption    ├── docker inspect / history     (metadatos y capas)
+  ├── npm run test:coverage             ├── docker run mongo + app       (ejecución real)
+  └── npm audit --omit=dev              ├── curl a los endpoints         (verificación funcional)
+                                        ├── docker stop                  (apagado ordenado)
+                                        ├── docker push                  (DockerHub, tags 1.0.0 y latest)
+                                        └── docker scout + trivy         (escaneo de seguridad)
+```
+
+Las credenciales de DockerHub nunca viajan en el repositorio: se guardan como *repository secrets* (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`) y el token es de tipo *personal access token* con permisos acotados de lectura y escritura, revocable sin cambiar la contraseña de la cuenta.
+
 ## Log de construcción de la imagen
 
-Comando:
+Comando ejecutado por el pipeline (idéntico al documentado para uso manual):
 
 ```bash
-docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .
+docker build --progress=plain -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 ```
 
 {{LOG:entrega/logs/docker-build.log}}
