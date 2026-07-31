@@ -343,11 +343,49 @@ docker build --target test -t adoptme-tests .
 
 ### Log de construcción
 
-<!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .` -->
+Últimas líneas del build (log completo en [`entrega/logs/docker-build.log`](entrega/logs/docker-build.log)):
+
+```
+#15 [runtime 3/4] COPY --chown=node:node src ./src
+#15 DONE 0.0s
+
+#16 [runtime 4/4] RUN rm -rf /usr/local/lib/node_modules/npm  /usr/local/bin/npm  /usr/local/bin/npx
+#16 DONE 0.5s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.8s done
+#17 writing image sha256:43d43bb1e6c306cf1e21e043979c3f421b5ab492097abd1b0a77135b01499feb done
+#17 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
+#17 DONE 0.8s
+```
 
 ### Log de ejecución del contenedor
 
-<!-- PENDIENTE: pegar la salida real de `docker logs adoptme` -->
+Log completo en [`entrega/logs/docker-run.log`](entrega/logs/docker-run.log):
+
+```
+$ docker ps
+NAMES           IMAGE                                      STATUS                   PORTS
+adoptme         thomimunioz/iii-backend-coderhouse:1.0.0   Up 6 seconds (healthy)   0.0.0.0:8080->8080/tcp
+adoptme-mongo   mongo:7                                    Up 6 seconds             27017/tcp
+
+$ docker logs adoptme
+Conectado a MongoDB
+Servidor escuchando en el puerto 8080
+Documentacion OpenAPI en http://localhost:8080/api/docs
+
+$ docker exec adoptme id
+uid=1000(node) gid=1000(node) groups=1000(node),1000(node)
+
+$ docker stop adoptme
+SIGTERM recibido, cerrando la aplicacion...
+Servidor HTTP y conexion a MongoDB cerrados
+```
+
+El `STATUS` en `(healthy)` confirma que el `HEALTHCHECK` responde, el `uid=1000(node)` que el proceso no corre como root, y las dos últimas líneas que el contenedor cierra ordenadamente ante `docker stop`.
+
+La verificación funcional completa de los endpoints contra el contenedor (adopción exitosa 201, mascota ya adoptada 400, adopción inexistente 404, id inválido 400) está en [`entrega/logs/verificacion-endpoints.log`](entrega/logs/verificacion-endpoints.log).
 
 ---
 
@@ -378,7 +416,34 @@ npm audit --omit=dev
 
 `npm audit --omit=dev` reporta **0 vulnerabilidades** en las dependencias de producción, que son las únicas que llegan a la imagen. Las vulnerabilidades reportadas por `npm audit` sin filtros pertenecen a devDependencies (herramientas de testing), que la etapa `prune` elimina antes de construir la imagen final.
 
-<!-- PENDIENTE: pegar la salida real de `docker scout quickview` -->
+Resultado del escaneo (log completo en [`entrega/logs/docker-scout.log`](entrega/logs/docker-scout.log)):
+
+```
+ Target             │  thomimunioz/iii-backend-coderhouse:1.0.0  │    0C     0H     0M     0L
+   digest           │  43d43bb1e6c3                              │
+ Base image         │  node:22-alpine                            │    1C     5H     8M     0L
+
+Policy status  FAILED  (5/7 policies met)
+Health score  B  (78%)
+
+## Packages and Vulnerabilities
+
+  No vulnerable packages detected
+```
+
+**0 vulnerabilidades en la imagen publicada.** El dato interesante está en la comparación: la imagen base `node:22-alpine` reporta 1 crítica, 5 altas y 8 medias, mientras que la imagen construida a partir de ella reporta 0.
+
+La diferencia es que esas vulnerabilidades venían en `tar`, `brace-expansion`, `sigstore` y `picomatch`, que son dependencias internas de **npm**, preinstalado en la imagen base. Como la aplicación arranca con `node server.js` y no usa npm en runtime, el gestor de paquetes se elimina en la etapa final del Dockerfile:
+
+```dockerfile
+RUN rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx
+```
+
+Además de eliminar los CVE, esto reduce la superficie de ataque: un contenedor productivo no debería tener una herramienta capaz de descargar e instalar código arbitrario.
+
+Como segunda opinión se corre también **Trivy**, que reporta 0 vulnerabilidades tanto en el sistema operativo (Alpine 3.24.1) como en los 167 paquetes de `node_modules` ([`entrega/logs/trivy.log`](entrega/logs/trivy.log)).
 
 ---
 

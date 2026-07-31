@@ -124,6 +124,21 @@ Escaneo de la imagen publicada, ya sin npm:
 
 {{LOG:entrega/logs/docker-scout.log}}
 
+Resultado de la corrección:
+
+| Métrica | Antes | Después |
+|---|---|---|
+| Vulnerabilidades críticas | 1 | **0** |
+| Vulnerabilidades altas | 5 | **0** |
+| Vulnerabilidades medias | 0 (8 en la base) | **0** |
+| Health score | C (56%) | **B (78%)** |
+| Políticas cumplidas | 4 de 7 | 5 de 7 |
+| Paquetes indexados | 360 | 190 |
+
+El propio reporte deja la prueba a la vista: en la fila `Base image` sigue figurando `node:22-alpine` con **1C 5H 8M**, mientras que la fila `Target` —la imagen construida a partir de esa misma base— reporta **0C 0H 0M 0L**. La diferencia la produce exclusivamente la eliminación de npm en la etapa final.
+
+Las dos políticas que siguen sin cumplirse son `Copyleft licensed packages found` (paquetes con licencias tipo copyleft entre las dependencias, una cuestión legal y no de seguridad) y `Required supply chain attestations missing` (falta firmar la imagen con atestaciones SLSA, algo que excede el alcance de este entregable).
+
 ### Segunda opinión: Trivy
 
 {{LOG:entrega/logs/trivy-resumen.log}}

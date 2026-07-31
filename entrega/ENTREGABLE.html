@@ -1163,7 +1163,7 @@ Sistema operativo: Ubuntu 24.04.4 LTS
 Node.js:           v22.23.1
 npm:               10.9.8
 Docker:            Docker version 28.0.4, build b8034c0
-Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
+Commit:            85d806c55a7bbed5122b3ce90ac567e1e33b0b0c
 </code></pre>
 <h3><code>npm test</code></h3>
 <pre><code class="language-text">
@@ -1207,7 +1207,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
 
 
-[92m [0m[32m 28 passing[0m[90m (131ms)[0m
+[92m [0m[32m 28 passing[0m[90m (139ms)[0m
 </code></pre>
 <p><strong>28 tests, 28 pasando, 0 fallando.</strong></p>
 <h3>Cobertura del módulo de adopciones — <code>npm run test:coverage:adoption</code></h3>
@@ -1219,7 +1219,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
 [0m[0m
 [0m  Tests funcionales - adoption.router.js (/api/adoptions)[0m
 [0m    GET /api/adoptions - listado de adopciones[0m
-    [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m
+    [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m[33m (42ms)[0m
     [32m  ✔[0m[90m responde 200 con un array vacio cuando todavia no hay adopciones[0m
     [32m  ✔[0m[90m devuelve cada adopcion con las propiedades _id, owner y pet[0m
     [32m  ✔[0m[90m responde 500 sin filtrar detalles internos si el service falla[0m
@@ -1252,7 +1252,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
 
 
-[92m [0m[32m 28 passing[0m[90m (131ms)[0m
+[92m [0m[32m 28 passing[0m[90m (154ms)[0m
 
 ---------------------------------|---------|----------|---------|---------|-------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
@@ -1310,7 +1310,7 @@ All files                        |     100 |    95.65 |     100 |     100 |
     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
 
 
-[92m [0m[32m 28 passing[0m[90m (129ms)[0m
+[92m [0m[32m 28 passing[0m[90m (146ms)[0m
 
 ---------------------------------|---------|----------|---------|---------|-------------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s       
@@ -1373,13 +1373,13 @@ All files                        |      77 |     94.2 |   24.67 |      77 |
 {&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[]}
 --- POST /api/mocks/generateData?users=3&amp;pets=5
 {&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Datos generados e insertados en MongoDB&quot;,&quot;payload&quot;:{&quot;users&quot;:3,&quot;pets&quot;:5,&quot;mockPassword&quot;:&quot;coder123&quot;}}
---- Usuario de prueba: 6a6be87772365f98482a6e88
---- Mascota de prueba: 6a6be87772365f98482a6e8b
+--- Usuario de prueba: 6a6beb15659095554c74579f
+--- Mascota de prueba: 6a6beb15659095554c7457a2
 --- POST /api/adoptions/$USER_ID/$PET_ID (adopcion exitosa)
-{&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Pet adopted&quot;,&quot;payload&quot;:{&quot;owner&quot;:&quot;6a6be87772365f98482a6e88&quot;,&quot;pet&quot;:&quot;6a6be87772365f98482a6e8b&quot;,&quot;_id&quot;:&quot;6a6be87772365f98482a6e90&quot;,&quot;__v&quot;:0}}
+{&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Pet adopted&quot;,&quot;payload&quot;:{&quot;owner&quot;:&quot;6a6beb15659095554c74579f&quot;,&quot;pet&quot;:&quot;6a6beb15659095554c7457a2&quot;,&quot;_id&quot;:&quot;6a6beb15659095554c7457a7&quot;,&quot;__v&quot;:0}}
 HTTP 201
 --- GET /api/adoptions (ya tiene la adopcion registrada)
-{&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[{&quot;_id&quot;:&quot;6a6be87772365f98482a6e90&quot;,&quot;owner&quot;:&quot;6a6be87772365f98482a6e88&quot;,&quot;pet&quot;:&quot;6a6be87772365f98482a6e8b&quot;,&quot;__v&quot;:0}]}
+{&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[{&quot;_id&quot;:&quot;6a6beb15659095554c7457a7&quot;,&quot;owner&quot;:&quot;6a6beb15659095554c74579f&quot;,&quot;pet&quot;:&quot;6a6beb15659095554c7457a2&quot;,&quot;__v&quot;:0}]}
 --- POST de la MISMA mascota otra vez (debe dar 400)
 {&quot;status&quot;:&quot;error&quot;,&quot;error&quot;:&quot;Pet is already adopted&quot;}
 HTTP 400
@@ -2078,7 +2078,7 @@ jobs:
 <pre><code class="language-text">#0 building with &quot;default&quot; instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 4.73kB done
+#1 transferring dockerfile: 5.32kB done
 #1 DONE 0.0s
 
 #2 resolve image config for docker-image://docker.io/docker/dockerfile:1
@@ -2114,31 +2114,34 @@ jobs:
 #11 CACHED
 
 #12 [prune 1/1] RUN npm prune --omit=dev &amp;&amp; npm cache clean --force
-#12 0.777 
-#12 0.777 up to date, audited 163 packages in 618ms
-#12 0.777 
-#12 0.777 41 packages are looking for funding
-#12 0.777   run `npm fund` for details
-#12 0.778 
-#12 0.778 found 0 vulnerabilities
-#12 0.879 npm warn using --force Recommended protections disabled.
-#12 DONE 1.3s
+#12 1.138 
+#12 1.138 up to date, audited 163 packages in 983ms
+#12 1.138 
+#12 1.138 41 packages are looking for funding
+#12 1.138   run `npm fund` for details
+#12 1.139 
+#12 1.139 found 0 vulnerabilities
+#12 1.228 npm warn using --force Recommended protections disabled.
+#12 DONE 2.8s
 
-#13 [runtime 1/3] COPY --from=prune --chown=node:node /app/node_modules ./node_modules
-#13 DONE 0.3s
+#13 [runtime 1/4] COPY --from=prune --chown=node:node /app/node_modules ./node_modules
+#13 DONE 1.0s
 
-#14 [runtime 2/3] COPY --chown=node:node package.json server.js ./
+#14 [runtime 2/4] COPY --chown=node:node package.json server.js ./
 #14 DONE 0.0s
 
-#15 [runtime 3/3] COPY --chown=node:node src ./src
+#15 [runtime 3/4] COPY --chown=node:node src ./src
 #15 DONE 0.0s
 
-#16 exporting to image
-#16 exporting layers
-#16 exporting layers 0.7s done
-#16 writing image sha256:172bde943974eb978f80af7125712efbb8c70e4dd88b9293db3a1fc92eb127e8 done
-#16 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
-#16 DONE 0.7s
+#16 [runtime 4/4] RUN rm -rf /usr/local/lib/node_modules/npm            /usr/local/bin/npm            /usr/local/bin/npx
+#16 DONE 0.5s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.8s done
+#17 writing image sha256:43d43bb1e6c306cf1e21e043979c3f421b5ab492097abd1b0a77135b01499feb done
+#17 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
+#17 DONE 0.8s
 </code></pre>
 <p>En este log se observa la <strong>caché de capas funcionando</strong>: los pasos <code>[deps 1/3]</code> a <code>[deps 3/3]</code> aparecen como <code>CACHED</code> porque el build anterior (el de la etapa <code>test</code>, que corre primero en el pipeline) ya los había construido. Como ninguna de esas capas depende del código de <code>src/</code>, se reutilizan tal cual y el build final se resuelve en segundos. El log de construcción completo desde cero, con la instalación de dependencias y la compilación de <code>bcrypt</code>, es el de la sección siguiente.</p>
 <h2>Tests ejecutados dentro de la imagen</h2>
@@ -2148,161 +2151,172 @@ jobs:
 <pre><code class="language-text">#0 building with &quot;default&quot; instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 4.73kB done
+#1 transferring dockerfile: 5.32kB done
 #1 DONE 0.0s
 
-#2 [auth] docker/dockerfile:pull token for registry-1.docker.io
-#2 DONE 0.0s
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 ...
 
-#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
-#3 DONE 0.7s
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
 
 #4 docker-image://docker.io/docker/dockerfile:1@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
 #4 resolve docker.io/docker/dockerfile:1@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89 done
+#4 sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89 9.08kB / 9.08kB done
 #4 sha256:e82bbc85c3cb06cf2a5a27b058208b43984448acbcd6a832cd1491933d4376dd 1.13kB / 1.13kB done
 #4 sha256:1a998cca4d41cfecafb1989342c5e7378bc992589af7d47510c4b854bebfc7d7 1.33kB / 1.33kB done
-#4 sha256:50ba52cd6a2c01eaf1a9efbedc7c75b5da5e3965c1586001c722980487a73fd7 0B / 14.36MB 0.1s
-#4 sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89 9.08kB / 9.08kB done
+#4 sha256:50ba52cd6a2c01eaf1a9efbedc7c75b5da5e3965c1586001c722980487a73fd7 12.58MB / 14.36MB 0.1s
 #4 sha256:50ba52cd6a2c01eaf1a9efbedc7c75b5da5e3965c1586001c722980487a73fd7 14.36MB / 14.36MB 0.2s done
 #4 extracting sha256:50ba52cd6a2c01eaf1a9efbedc7c75b5da5e3965c1586001c722980487a73fd7 0.1s
 #4 extracting sha256:50ba52cd6a2c01eaf1a9efbedc7c75b5da5e3965c1586001c722980487a73fd7 0.1s done
 #4 DONE 0.3s
 
-#5 [auth] library/node:pull token for registry-1.docker.io
-#5 DONE 0.0s
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 ...
 
-#6 [internal] load metadata for docker.io/library/node:22-alpine
-#6 DONE 0.6s
+#6 [auth] library/node:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 0.7s
 
 #7 [internal] load .dockerignore
 #7 transferring context: 589B done
 #7 DONE 0.0s
 
-#8 [internal] load build context
-#8 transferring context: 197.35kB done
-#8 DONE 0.0s
+#8 [base 1/2] FROM docker.io/library/node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+#8 resolve docker.io/library/node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 0.0s done
+#8 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 0B / 52.63MB 0.1s
+#8 sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 6.41kB / 6.41kB done
+#8 sha256:76789712cd1ae89a1225eac9077010d68987a423588042dac30446f502f1858c 1.72kB / 1.72kB done
+#8 sha256:395425e54d98ebbd748d388685a0c2de151a30fa92fffc10ba30fa63f3db64d6 6.56kB / 6.56kB done
+#8 ...
 
-#9 [base 1/2] FROM docker.io/library/node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
-#9 resolve docker.io/library/node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 done
-#9 sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 0B / 445B 0.1s
-#9 sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 6.41kB / 6.41kB done
-#9 sha256:76789712cd1ae89a1225eac9077010d68987a423588042dac30446f502f1858c 1.72kB / 1.72kB done
-#9 sha256:395425e54d98ebbd748d388685a0c2de151a30fa92fffc10ba30fa63f3db64d6 6.56kB / 6.56kB done
-#9 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 0B / 52.63MB 0.1s
-#9 sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 0B / 1.26MB 0.1s
-#9 sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 445B / 445B 0.2s done
-#9 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 3.15MB / 52.63MB 0.2s
-#9 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 33.55MB / 52.63MB 0.3s
-#9 sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 1.26MB / 1.26MB 0.3s done
-#9 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 52.63MB / 52.63MB 0.4s done
-#9 extracting sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a
-#9 extracting sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 1.0s done
-#9 extracting sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0
-#9 extracting sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 0.0s done
-#9 extracting sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 done
-#9 DONE 1.7s
+#9 [internal] load build context
+#9 transferring context: 197.35kB done
+#9 DONE 0.2s
+
+#8 [base 1/2] FROM docker.io/library/node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+#8 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 13.63MB / 52.63MB 0.3s
+#8 sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 0B / 1.26MB 0.3s
+#8 sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 0B / 445B 0.3s
+#8 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 32.51MB / 52.63MB 0.5s
+#8 sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 1.26MB / 1.26MB 0.4s done
+#8 sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 445B / 445B 0.4s done
+#8 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 52.63MB / 52.63MB 0.6s
+#8 sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 52.63MB / 52.63MB 0.9s done
+#8 extracting sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 0.1s
+#8 extracting sha256:efbef6f9e333972a10ca323e700496a64e7ddcc3a6725e6afbbae52e690f4a4a 1.0s done
+#8 extracting sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0
+#8 extracting sha256:a2980c1fee17dfd6263234b253955e0e9d5f38d47c0e71c001139897134899d0 0.0s done
+#8 extracting sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6
+#8 extracting sha256:16da5a6403776464b5bf551ef294de57da242eac594527ea551a46e7f76ac2d6 done
+#8 DONE 3.1s
 
 #10 [base 2/2] WORKDIR /app
 #10 DONE 0.0s
 
 #11 [deps 1/3] RUN apk add --no-cache --virtual .build-deps python3 make g++
-#11 1.038 ( 1/31) Installing libbz2 (1.0.8-r6)
-#11 1.050 ( 2/31) Installing libexpat (2.8.2-r0)
-#11 1.062 ( 3/31) Installing libffi (3.5.2-r1)
-#11 1.072 ( 4/31) Installing gdbm (1.26-r0)
-#11 1.083 ( 5/31) Installing xz-libs (5.8.3-r0)
-#11 1.098 ( 6/31) Installing mpdecimal (4.0.1-r0)
-#11 1.110 ( 7/31) Installing ncurses-terminfo-base (6.6_p20260516-r0)
-#11 1.122 ( 8/31) Installing libncursesw (6.6_p20260516-r0)
-#11 1.138 ( 9/31) Installing libpanelw (6.6_p20260516-r0)
-#11 1.148 (10/31) Installing readline (8.3.3-r1)
-#11 1.163 (11/31) Installing sqlite-libs (3.53.2-r0)
-#11 1.208 (12/31) Installing python3 (3.14.5-r0)
-#11 1.426 (13/31) Installing python3-pycache-pyc0 (3.14.5-r0)
-#11 1.522 (14/31) Installing pyc (3.14.5-r0)
-#11 1.522 (15/31) Installing python3-pyc (3.14.5-r0)
-#11 1.522 (16/31) Installing make (4.4.1-r4)
-#11 1.534 (17/31) Installing libstdc++-dev (15.2.0-r5)
-#11 1.651 (18/31) Installing jansson (2.15.0-r0)
-#11 1.661 (19/31) Installing zstd-libs (1.5.7-r2)
-#11 1.678 (20/31) Installing binutils (2.45.1-r1)
-#11 1.742 (21/31) Installing libgcc-static (15.2.0-r5)
-#11 1.779 (22/31) Installing libgomp (15.2.0-r5)
-#11 1.791 (23/31) Installing libatomic (15.2.0-r5)
-#11 1.801 (24/31) Installing gmp (6.3.0-r4)
-#11 1.814 (25/31) Installing isl26 (0.26-r2)
-#11 1.837 (26/31) Installing mpfr4 (4.2.2-r0)
-#11 1.852 (27/31) Installing mpc1 (1.3.1-r1)
-#11 1.863 (28/31) Installing gcc (15.2.0-r5)
-#11 2.730 (29/31) Installing musl-dev (1.2.6-r2)
-#11 2.786 (30/31) Installing g++ (15.2.0-r5)
-#11 3.039 (31/31) Installing .build-deps (20260731.001213)
-#11 3.040 Executing busybox-1.37.0-r31.trigger
-#11 3.058 OK: 301.4 MiB in 49 packages
-#11 DONE 3.6s
+#11 0.715 ( 1/31) Installing libbz2 (1.0.8-r6)
+#11 0.727 ( 2/31) Installing libexpat (2.8.2-r0)
+#11 0.738 ( 3/31) Installing libffi (3.5.2-r1)
+#11 0.748 ( 4/31) Installing gdbm (1.26-r0)
+#11 0.758 ( 5/31) Installing xz-libs (5.8.3-r0)
+#11 0.772 ( 6/31) Installing mpdecimal (4.0.1-r0)
+#11 0.787 ( 7/31) Installing ncurses-terminfo-base (6.6_p20260516-r0)
+#11 0.798 ( 8/31) Installing libncursesw (6.6_p20260516-r0)
+#11 0.814 ( 9/31) Installing libpanelw (6.6_p20260516-r0)
+#11 0.823 (10/31) Installing readline (8.3.3-r1)
+#11 0.837 (11/31) Installing sqlite-libs (3.53.2-r0)
+#11 0.879 (12/31) Installing python3 (3.14.5-r0)
+#11 1.088 (13/31) Installing python3-pycache-pyc0 (3.14.5-r0)
+#11 1.181 (14/31) Installing pyc (3.14.5-r0)
+#11 1.181 (15/31) Installing python3-pyc (3.14.5-r0)
+#11 1.181 (16/31) Installing make (4.4.1-r4)
+#11 1.192 (17/31) Installing libstdc++-dev (15.2.0-r5)
+#11 1.302 (18/31) Installing jansson (2.15.0-r0)
+#11 1.312 (19/31) Installing zstd-libs (1.5.7-r2)
+#11 1.327 (20/31) Installing binutils (2.45.1-r1)
+#11 1.389 (21/31) Installing libgcc-static (15.2.0-r5)
+#11 1.421 (22/31) Installing libgomp (15.2.0-r5)
+#11 1.433 (23/31) Installing libatomic (15.2.0-r5)
+#11 1.442 (24/31) Installing gmp (6.3.0-r4)
+#11 1.454 (25/31) Installing isl26 (0.26-r2)
+#11 1.476 (26/31) Installing mpfr4 (4.2.2-r0)
+#11 1.490 (27/31) Installing mpc1 (1.3.1-r1)
+#11 1.499 (28/31) Installing gcc (15.2.0-r5)
+#11 2.368 (29/31) Installing musl-dev (1.2.6-r2)
+#11 2.424 (30/31) Installing g++ (15.2.0-r5)
+#11 2.675 (31/31) Installing .build-deps (20260731.002314)
+#11 2.675 Executing busybox-1.37.0-r31.trigger
+#11 2.683 OK: 301.4 MiB in 49 packages
+#11 DONE 4.5s
 
 #12 [deps 2/3] COPY package.json package-lock.json ./
 #12 DONE 0.0s
 
 #13 [deps 3/3] RUN npm ci --include=dev     &amp;&amp; apk del .build-deps
-#13 2.621 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-#13 2.645 npm warn deprecated glob@11.1.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-#13 3.989 
-#13 3.989 added 286 packages, and audited 287 packages in 4s
-#13 3.989 
-#13 3.989 73 packages are looking for funding
-#13 3.989   run `npm fund` for details
-#13 3.996 
-#13 3.996 8 vulnerabilities (1 low, 7 high)
-#13 3.996 
-#13 3.996 To address all issues (including breaking changes), run:
-#13 3.996   npm audit fix --force
-#13 3.996 
-#13 3.996 Run `npm audit` for details.
-#13 3.997 npm notice
-#13 3.997 npm notice New major version of npm available! 10.9.8 -&gt; 12.0.2
-#13 3.997 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
-#13 3.997 npm notice To update run: npm install -g npm@12.0.2
-#13 3.997 npm notice
-#13 4.067 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: No such file or directory
-#13 4.067 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: No such file or directory
-#13 4.067 ( 1/31) Purging .build-deps (20260731.001213)
-#13 4.067 ( 2/31) Purging python3-pyc (3.14.5-r0)
-#13 4.067 ( 3/31) Purging python3-pycache-pyc0 (3.14.5-r0)
-#13 4.106 ( 4/31) Purging pyc (3.14.5-r0)
-#13 4.106 ( 5/31) Purging python3 (3.14.5-r0)
-#13 4.125 ( 6/31) Purging make (4.4.1-r4)
-#13 4.125 ( 7/31) Purging g++ (15.2.0-r5)
-#13 4.127 ( 8/31) Purging libstdc++-dev (15.2.0-r5)
-#13 4.154 ( 9/31) Purging gcc (15.2.0-r5)
-#13 4.179 (10/31) Purging binutils (2.45.1-r1)
-#13 4.185 (11/31) Purging libgcc-static (15.2.0-r5)
-#13 4.185 (12/31) Purging libatomic (15.2.0-r5)
-#13 4.186 (13/31) Purging libgomp (15.2.0-r5)
-#13 4.186 (14/31) Purging musl-dev (1.2.6-r2)
-#13 4.192 (15/31) Purging gdbm (1.26-r0)
-#13 4.192 (16/31) Purging isl26 (0.26-r2)
-#13 4.192 (17/31) Purging jansson (2.15.0-r0)
-#13 4.193 (18/31) Purging libbz2 (1.0.8-r6)
-#13 4.193 (19/31) Purging libexpat (2.8.2-r0)
-#13 4.193 (20/31) Purging libffi (3.5.2-r1)
-#13 4.193 (21/31) Purging libpanelw (6.6_p20260516-r0)
-#13 4.193 (22/31) Purging mpc1 (1.3.1-r1)
-#13 4.193 (23/31) Purging mpdecimal (4.0.1-r0)
-#13 4.193 (24/31) Purging mpfr4 (4.2.2-r0)
-#13 4.193 (25/31) Purging readline (8.3.3-r1)
-#13 4.193 (26/31) Purging sqlite-libs (3.53.2-r0)
-#13 4.193 (27/31) Purging xz-libs (5.8.3-r0)
-#13 4.193 (28/31) Purging zstd-libs (1.5.7-r2)
-#13 4.193 (29/31) Purging gmp (6.3.0-r4)
-#13 4.193 (30/31) Purging libncursesw (6.6_p20260516-r0)
-#13 4.193 (31/31) Purging ncurses-terminfo-base (6.6_p20260516-r0)
-#13 4.200 Executing busybox-1.37.0-r31.trigger
-#13 4.203 OK: 10.8 MiB in 18 packages
-#13 DONE 4.2s
+#13 2.291 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#13 2.414 npm warn deprecated glob@11.1.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#13 3.513 
+#13 3.513 added 286 packages, and audited 287 packages in 3s
+#13 3.513 
+#13 3.513 73 packages are looking for funding
+#13 3.513   run `npm fund` for details
+#13 3.520 
+#13 3.520 8 vulnerabilities (1 low, 7 high)
+#13 3.520 
+#13 3.520 To address all issues (including breaking changes), run:
+#13 3.520   npm audit fix --force
+#13 3.520 
+#13 3.520 Run `npm audit` for details.
+#13 3.521 npm notice
+#13 3.521 npm notice New major version of npm available! 10.9.8 -&gt; 12.0.2
+#13 3.521 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+#13 3.521 npm notice To update run: npm install -g npm@12.0.2
+#13 3.521 npm notice
+#13 3.725 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: No such file or directory
+#13 3.725 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: No such file or directory
+#13 3.725 ( 1/31) Purging .build-deps (20260731.002314)
+#13 3.725 ( 2/31) Purging python3-pyc (3.14.5-r0)
+#13 3.725 ( 3/31) Purging python3-pycache-pyc0 (3.14.5-r0)
+#13 3.968 ( 4/31) Purging pyc (3.14.5-r0)
+#13 3.968 ( 5/31) Purging python3 (3.14.5-r0)
+#13 4.004 ( 6/31) Purging make (4.4.1-r4)
+#13 4.004 ( 7/31) Purging g++ (15.2.0-r5)
+#13 4.044 ( 8/31) Purging libstdc++-dev (15.2.0-r5)
+#13 4.417 ( 9/31) Purging gcc (15.2.0-r5)
+#13 4.443 (10/31) Purging binutils (2.45.1-r1)
+#13 4.449 (11/31) Purging libgcc-static (15.2.0-r5)
+#13 4.449 (12/31) Purging libatomic (15.2.0-r5)
+#13 4.449 (13/31) Purging libgomp (15.2.0-r5)
+#13 4.449 (14/31) Purging musl-dev (1.2.6-r2)
+#13 4.651 (15/31) Purging gdbm (1.26-r0)
+#13 4.651 (16/31) Purging isl26 (0.26-r2)
+#13 4.651 (17/31) Purging jansson (2.15.0-r0)
+#13 4.651 (18/31) Purging libbz2 (1.0.8-r6)
+#13 4.651 (19/31) Purging libexpat (2.8.2-r0)
+#13 4.651 (20/31) Purging libffi (3.5.2-r1)
+#13 4.651 (21/31) Purging libpanelw (6.6_p20260516-r0)
+#13 4.651 (22/31) Purging mpc1 (1.3.1-r1)
+#13 4.652 (23/31) Purging mpdecimal (4.0.1-r0)
+#13 4.652 (24/31) Purging mpfr4 (4.2.2-r0)
+#13 4.652 (25/31) Purging readline (8.3.3-r1)
+#13 4.652 (26/31) Purging sqlite-libs (3.53.2-r0)
+#13 4.652 (27/31) Purging xz-libs (5.8.3-r0)
+#13 4.652 (28/31) Purging zstd-libs (1.5.7-r2)
+#13 4.652 (29/31) Purging gmp (6.3.0-r4)
+#13 4.652 (30/31) Purging libncursesw (6.6_p20260516-r0)
+#13 4.652 (31/31) Purging ncurses-terminfo-base (6.6_p20260516-r0)
+#13 4.674 Executing busybox-1.37.0-r31.trigger
+#13 4.678 OK: 10.8 MiB in 18 packages
+#13 DONE 5.5s
 
 #14 [test 1/4] COPY .mocharc.json ./
-#14 DONE 0.1s
+#14 DONE 0.0s
 
 #15 [test 2/4] COPY src ./src
 #15 DONE 0.0s
@@ -2311,55 +2325,55 @@ jobs:
 #16 DONE 0.0s
 
 #17 [test 4/4] RUN npm test
-#17 0.228 
-#17 0.228 &gt; backend-3_coderhouse@1.0.0 test
-#17 0.228 &gt; mocha
-#17 0.228 
-#17 1.007 
-#17 1.008 [0m[0m
-#17 1.009 [0m  Tests funcionales - adoption.router.js (/api/adoptions)[0m
-#17 1.009 [0m    GET /api/adoptions - listado de adopciones[0m
-#17 1.029     [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m
-#17 1.033     [32m  ✔[0m[90m responde 200 con un array vacio cuando todavia no hay adopciones[0m
-#17 1.037     [32m  ✔[0m[90m devuelve cada adopcion con las propiedades _id, owner y pet[0m
-#17 1.041     [32m  ✔[0m[90m responde 500 sin filtrar detalles internos si el service falla[0m
-#17 1.041 [0m    GET /api/adoptions/:aid - adopcion por id[0m
-#17 1.046     [32m  ✔[0m[90m responde 200 con la adopcion pedida y consulta el service por _id[0m
-#17 1.048     [32m  ✔[0m[90m responde 404 con status error cuando la adopcion no existe[0m
-#17 1.059     [32m  ✔[0m[90m responde 400 y no consulta la base cuando el id no tiene formato de ObjectId[0m
-#17 1.061     [32m  ✔[0m[90m responde 500 si el service lanza una excepcion inesperada[0m
-#17 1.061 [0m    POST /api/adoptions/:uid/:pid - registrar una adopcion[0m
-#17 1.068     [32m  ✔[0m[90m responde 201 con el mensaje &quot;Pet adopted&quot; y la adopcion creada[0m
-#17 1.077     [32m  ✔[0m[90m agrega la mascota al array pets del usuario[0m
-#17 1.082     [32m  ✔[0m[90m conserva las mascotas que el usuario ya tenia[0m
-#17 1.087     [32m  ✔[0m[90m marca la mascota como adoptada y le asigna el owner[0m
-#17 1.091     [32m  ✔[0m[90m crea el documento de adopcion vinculando owner y pet[0m
-#17 1.095     [32m  ✔[0m[90m ejecuta las operaciones en el orden correcto (usuario, mascota, adopcion)[0m
-#17 1.100     [32m  ✔[0m[90m funciona sin body: toda la informacion viaja en los parametros de ruta[0m
-#17 1.102     [32m  ✔[0m[90m responde 404 si el usuario no existe y no sigue consultando la mascota[0m
-#17 1.106     [32m  ✔[0m[90m responde 404 si la mascota no existe y no persiste ningun cambio[0m
-#17 1.109     [32m  ✔[0m[90m responde 400 si la mascota ya fue adoptada y no vuelve a escribir en la base[0m
-#17 1.113     [32m  ✔[0m[90m responde 400 cuando el uid no tiene formato de ObjectId[0m
-#17 1.114     [32m  ✔[0m[90m responde 400 cuando el pid no tiene formato de ObjectId[0m
-#17 1.116     [32m  ✔[0m[90m valida el uid antes que el pid cuando los dos son invalidos[0m
-#17 1.119     [32m  ✔[0m[90m responde 500 si falla la actualizacion del usuario y no crea la adopcion[0m
-#17 1.124     [32m  ✔[0m[90m responde 500 si falla la creacion de la adopcion[0m
-#17 1.127     [32m  ✔[0m[90m busca al usuario por id y a la mascota por _id con los params recibidos[0m
-#17 1.128 [0m    Contrato del router[0m
-#17 1.129     [32m  ✔[0m[90m no expone DELETE /api/adoptions/:aid[0m
-#17 1.131     [32m  ✔[0m[90m no expone PUT /api/adoptions/:uid/:pid[0m
-#17 1.132     [32m  ✔[0m[90m no expone POST /api/adoptions sin parametros[0m
-#17 1.134     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
-#17 1.134 
-#17 1.134 
-#17 1.134 [92m [0m[32m 28 passing[0m[90m (127ms)[0m
-#17 1.134 
-#17 DONE 1.2s
+#17 0.226 
+#17 0.226 &gt; backend-3_coderhouse@1.0.0 test
+#17 0.226 &gt; mocha
+#17 0.226 
+#17 0.869 
+#17 0.869 [0m[0m
+#17 0.870 [0m  Tests funcionales - adoption.router.js (/api/adoptions)[0m
+#17 0.870 [0m    GET /api/adoptions - listado de adopciones[0m
+#17 0.887     [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m
+#17 0.891     [32m  ✔[0m[90m responde 200 con un array vacio cuando todavia no hay adopciones[0m
+#17 0.894     [32m  ✔[0m[90m devuelve cada adopcion con las propiedades _id, owner y pet[0m
+#17 0.898     [32m  ✔[0m[90m responde 500 sin filtrar detalles internos si el service falla[0m
+#17 0.898 [0m    GET /api/adoptions/:aid - adopcion por id[0m
+#17 0.903     [32m  ✔[0m[90m responde 200 con la adopcion pedida y consulta el service por _id[0m
+#17 0.911     [32m  ✔[0m[90m responde 404 con status error cuando la adopcion no existe[0m
+#17 0.920     [32m  ✔[0m[90m responde 400 y no consulta la base cuando el id no tiene formato de ObjectId[0m
+#17 0.922     [32m  ✔[0m[90m responde 500 si el service lanza una excepcion inesperada[0m
+#17 0.922 [0m    POST /api/adoptions/:uid/:pid - registrar una adopcion[0m
+#17 0.927     [32m  ✔[0m[90m responde 201 con el mensaje &quot;Pet adopted&quot; y la adopcion creada[0m
+#17 0.930     [32m  ✔[0m[90m agrega la mascota al array pets del usuario[0m
+#17 0.935     [32m  ✔[0m[90m conserva las mascotas que el usuario ya tenia[0m
+#17 0.939     [32m  ✔[0m[90m marca la mascota como adoptada y le asigna el owner[0m
+#17 0.942     [32m  ✔[0m[90m crea el documento de adopcion vinculando owner y pet[0m
+#17 0.945     [32m  ✔[0m[90m ejecuta las operaciones en el orden correcto (usuario, mascota, adopcion)[0m
+#17 0.949     [32m  ✔[0m[90m funciona sin body: toda la informacion viaja en los parametros de ruta[0m
+#17 0.952     [32m  ✔[0m[90m responde 404 si el usuario no existe y no sigue consultando la mascota[0m
+#17 0.955     [32m  ✔[0m[90m responde 404 si la mascota no existe y no persiste ningun cambio[0m
+#17 0.958     [32m  ✔[0m[90m responde 400 si la mascota ya fue adoptada y no vuelve a escribir en la base[0m
+#17 0.960     [32m  ✔[0m[90m responde 400 cuando el uid no tiene formato de ObjectId[0m
+#17 0.962     [32m  ✔[0m[90m responde 400 cuando el pid no tiene formato de ObjectId[0m
+#17 0.963     [32m  ✔[0m[90m valida el uid antes que el pid cuando los dos son invalidos[0m
+#17 0.968     [32m  ✔[0m[90m responde 500 si falla la actualizacion del usuario y no crea la adopcion[0m
+#17 0.971     [32m  ✔[0m[90m responde 500 si falla la creacion de la adopcion[0m
+#17 0.974     [32m  ✔[0m[90m busca al usuario por id y a la mascota por _id con los params recibidos[0m
+#17 0.975 [0m    Contrato del router[0m
+#17 0.976     [32m  ✔[0m[90m no expone DELETE /api/adoptions/:aid[0m
+#17 0.977     [32m  ✔[0m[90m no expone PUT /api/adoptions/:uid/:pid[0m
+#17 0.979     [32m  ✔[0m[90m no expone POST /api/adoptions sin parametros[0m
+#17 0.980     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
+#17 0.980 
+#17 0.981 
+#17 0.981 [92m [0m[32m 28 passing[0m[90m (112ms)[0m
+#17 0.981 
+#17 DONE 1.1s
 
 #18 exporting to image
 #18 exporting layers
-#18 exporting layers 1.6s done
-#18 writing image sha256:55344cd780d41fd28025fb51c9dcffa858907c404f5e80efc7939963e561e3be done
+#18 exporting layers 1.5s done
+#18 writing image sha256:e9f44f89ab78cf49d9b546ae5a60c35330aaa206e3474a72cd4d9b4b166e65ae done
 #18 naming to docker.io/library/adoptme-tests done
 #18 DONE 1.6s
 </code></pre>
@@ -2424,8 +2438,8 @@ docker history thomimunioz/iii-backend-coderhouse:1.0.0
  docker images thomimunioz/iii-backend-coderhouse
 ==============================================================
 REPOSITORY                           TAG       IMAGE ID       CREATED        SIZE
-thomimunioz/iii-backend-coderhouse   1.0.0     172bde943974   1 second ago   205MB
-thomimunioz/iii-backend-coderhouse   latest    172bde943974   1 second ago   205MB
+thomimunioz/iii-backend-coderhouse   1.0.0     43d43bb1e6c3   1 second ago   205MB
+thomimunioz/iii-backend-coderhouse   latest    43d43bb1e6c3   1 second ago   205MB
 
 ==============================================================
  Metadatos (docker inspect)
@@ -2436,7 +2450,7 @@ Usuario:      node
 Puerto:       8080/tcp
 Comando:      [node server.js]
 Tamano:       204527695 bytes
-Capas:        8
+Capas:        9
 
 ==============================================================
  Capas de la imagen (docker history)
@@ -2446,6 +2460,7 @@ SIZE      CREATED BY
 0B        HEALTHCHECK {Test:[CMD-SHELL node -e &quot;fetch(&#39;http://127.0.0.1:&#39;+(process.env.PORT||8080)+&#39;/api/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;] Interval:30s Timeout:5s StartPeriod:15s StartInterval:0s Retries:3}
 0B        EXPOSE [8080/tcp]
 0B        USER node
+0B        RUN /bin/sh -c rm -rf /usr/local/lib/node_modules/npm            /usr/local/bin/npm            /usr/local/bin/npx # buildkit
 47kB      COPY --chown=node:node src ./src # buildkit
 3.15kB    COPY --chown=node:node package.json server.js ./ # buildkit
 39.8MB    COPY --chown=node:node /app/node_modules ./node_modules # buildkit
@@ -2462,47 +2477,53 @@ SIZE      CREATED BY
 0B        CMD [&quot;/bin/sh&quot;]
 8.41MB    ADD alpine-minirootfs-3.24.1-x86_64.tar.gz / # buildkit
 The push refers to repository [docker.io/thomimunioz/iii-backend-coderhouse]
-fca9a387393c: Preparing
-50159ee5ed67: Preparing
-82bc7de7069b: Preparing
-e5fdae4a4083: Preparing
+ebd6cff57050: Preparing
+2e838ae218f0: Preparing
+d2bea78ee748: Preparing
+1e7c0415e12d: Preparing
+1e00cf8b1dc8: Preparing
 baf2266664ba: Preparing
 fe2c6446e3d9: Preparing
 5654eeaf0464: Preparing
 34884abbe928: Preparing
+baf2266664ba: Waiting
 fe2c6446e3d9: Waiting
 5654eeaf0464: Waiting
 34884abbe928: Waiting
-baf2266664ba: Mounted from library/node
-fe2c6446e3d9: Mounted from library/node
-50159ee5ed67: Pushed
-e5fdae4a4083: Pushed
-5654eeaf0464: Mounted from library/node
-fca9a387393c: Pushed
-34884abbe928: Mounted from library/node
-82bc7de7069b: Pushed
-1.0.0: digest: sha256:84d4da221a75d20c1e625a3f48bab07694270a823b6d1592233a6a6752d76af4 size: 1993
-The push refers to repository [docker.io/thomimunioz/iii-backend-coderhouse]
-fca9a387393c: Preparing
-50159ee5ed67: Preparing
-82bc7de7069b: Preparing
-e5fdae4a4083: Preparing
-baf2266664ba: Preparing
-fe2c6446e3d9: Preparing
-5654eeaf0464: Preparing
-34884abbe928: Preparing
-fe2c6446e3d9: Waiting
-5654eeaf0464: Waiting
-34884abbe928: Waiting
-e5fdae4a4083: Layer already exists
+2e838ae218f0: Pushed
+1e00cf8b1dc8: Pushed
+ebd6cff57050: Pushed
 baf2266664ba: Layer already exists
-82bc7de7069b: Layer already exists
-fca9a387393c: Layer already exists
-50159ee5ed67: Layer already exists
+d2bea78ee748: Pushed
+fe2c6446e3d9: Layer already exists
 5654eeaf0464: Layer already exists
 34884abbe928: Layer already exists
+1e7c0415e12d: Pushed
+1.0.0: digest: sha256:94467d6445549bce5585785ca37d530aed636151a9e3e1c357ce6c4603dabb05 size: 2200
+The push refers to repository [docker.io/thomimunioz/iii-backend-coderhouse]
+ebd6cff57050: Preparing
+2e838ae218f0: Preparing
+d2bea78ee748: Preparing
+1e7c0415e12d: Preparing
+1e00cf8b1dc8: Preparing
+baf2266664ba: Preparing
+fe2c6446e3d9: Preparing
+5654eeaf0464: Preparing
+34884abbe928: Preparing
+baf2266664ba: Waiting
+fe2c6446e3d9: Waiting
+5654eeaf0464: Waiting
+34884abbe928: Waiting
+d2bea78ee748: Layer already exists
+1e00cf8b1dc8: Layer already exists
+2e838ae218f0: Layer already exists
+ebd6cff57050: Layer already exists
+1e7c0415e12d: Layer already exists
 fe2c6446e3d9: Layer already exists
-latest: digest: sha256:84d4da221a75d20c1e625a3f48bab07694270a823b6d1592233a6a6752d76af4 size: 1993
+baf2266664ba: Layer already exists
+34884abbe928: Layer already exists
+5654eeaf0464: Layer already exists
+latest: digest: sha256:94467d6445549bce5585785ca37d530aed636151a9e3e1c357ce6c4603dabb05 size: 2200
 
 Imagen publicada: https://hub.docker.com/r/thomimunioz/iii-backend-coderhouse
 </code></pre>
@@ -2522,7 +2543,7 @@ Documentacion OpenAPI en http://localhost:8080/api/docs
 <pre><code class="language-text">==============================================================
  Red y contenedores
 ==============================================================
-e6b5263655dde102953e2be2cedea4f5b7cf9706e3ecbecc5bd8c4866b265af1
+fe348ff03dd09392438e18f1db84b90280adf88ca4eae7eab6599f491d9e1b1d
 Unable to find image &#39;mongo:7&#39; locally
 7: Pulling from library/mongo
 d6834b4a794c: Already exists
@@ -2533,33 +2554,35 @@ bd2fcc94b9a5: Pulling fs layer
 b018bf118dcf: Pulling fs layer
 a4ab1d4d252a: Pulling fs layer
 6a382e0eb5fb: Pulling fs layer
-bd2fcc94b9a5: Waiting
 b018bf118dcf: Waiting
 a4ab1d4d252a: Waiting
+bd2fcc94b9a5: Waiting
 6a382e0eb5fb: Waiting
 906a31ae187c: Verifying Checksum
 906a31ae187c: Download complete
-906a31ae187c: Pull complete
+e208bdca56e1: Verifying Checksum
 e208bdca56e1: Download complete
 ed44cde2167b: Verifying Checksum
 ed44cde2167b: Download complete
+906a31ae187c: Pull complete
 bd2fcc94b9a5: Verifying Checksum
 bd2fcc94b9a5: Download complete
+b018bf118dcf: Verifying Checksum
 b018bf118dcf: Download complete
 6a382e0eb5fb: Verifying Checksum
 6a382e0eb5fb: Download complete
 ed44cde2167b: Pull complete
+a4ab1d4d252a: Verifying Checksum
+a4ab1d4d252a: Download complete
 e208bdca56e1: Pull complete
 bd2fcc94b9a5: Pull complete
 b018bf118dcf: Pull complete
-a4ab1d4d252a: Verifying Checksum
-a4ab1d4d252a: Download complete
 a4ab1d4d252a: Pull complete
 6a382e0eb5fb: Pull complete
 Digest: sha256:9bdaeb6dac6e7e762e84e2f84103d1f9bb078fa1ba6bde8bb9d2274f655ad173
 Status: Downloaded newer image for mongo:7
-afcda80eb577be582c28e7c395bcf82b9d56f3d797cce04979a128b9d31ca46d
-95f829a65b5fd271dd11069c95dff7ce52c285c132bf303f46845572fd401bfa
+aaa94330fb9eaf20d3e5c2ef172c92b6ece1a7c66898b7bef5eb339f1752cc56
+cea0d325b473fa55bbfc26d8dae82f19ce26da7fdbe895cd838ca4dbcae79a84
 
 Esperando a que el contenedor quede healthy...
 Contenedor healthy despues de 4 intentos
@@ -2775,10 +2798,125 @@ What&#39;s next:
 <p>Una aclaración honesta sobre el tamaño: borrar archivos en una capa superior <strong>no achica</strong> la imagen en disco, porque los archivos siguen existiendo en la capa base y solo se marcan como eliminados. Lo que cambia es el sistema de archivos efectivo del contenedor, que es lo que analizan los escáneres y lo que ve un proceso corriendo adentro. La ganancia acá es de seguridad, no de peso.</p>
 <h3>Segundo escaneo: verificación de la corrección</h3>
 <p>Escaneo de la imagen publicada, ya sin npm:</p>
-<pre><code class="language-text">PENDIENTE: escaneo de Docker Scout sobre la imagen ya sin npm (corrida #6 del pipeline)
+<pre><code class="language-text">==============================================================
+ docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
+==============================================================
+    ...Storing image for indexing
+    ✓ Image stored for indexing
+    ...Indexing
+    ✓ Indexed 190 packages
+    ...Evaluating policies
+    ✓ Policy evaluation completed
+
+    i Base image was auto-detected. To get more accurate results, build images with max-mode provenance attestations.
+      Review https://docs.docker.com/build/attestations/slsa-provenance/ for more information.
+
+ Target             │  thomimunioz/iii-backend-coderhouse:1.0.0  │    0C     0H     0M     0L  
+   digest           │  43d43bb1e6c3                              │                             
+ Base image         │  node:22-alpine                            │    1C     5H     8M     0L  
+ Updated base image │  node:22.23.2-alpine3.23                   │    1C     5H     9M     0L  
+                    │                                            │                  +1         
+
+Policy status  FAILED  (5/7 policies met)
+Health score  B  (78%)
+
+ Status │                   Policy                    │           Results           
+────────┼─────────────────────────────────────────────┼─────────────────────────────
+ ✓      │ Default non-root user                       │                             
+ !      │ Copyleft licensed packages found            │    18 packages              
+ ✓      │ No fixable critical or high vulnerabilities │    0C     0H     0M     0L  
+ ✓      │ No high-profile vulnerabilities             │    0C     0H     0M     0L  
+ ✓      │ No outdated base images                     │                             
+ ✓      │ No unapproved base images                   │    0 deviations             
+ !      │ Required supply chain attestations missing  │    2 deviations             
+
+What&#39;s next:
+    View policy violations → docker scout policy thomimunioz/iii-backend-coderhouse:1.0.0
+    View base image update recommendations → docker scout recommendations thomimunioz/iii-backend-coderhouse:1.0.0
+    Compare with the latest in the registry → docker scout compare --to-latest thomimunioz/iii-backend-coderhouse:1.0.0
+
+
+==============================================================
+ Vulnerabilidades criticas y altas
+==============================================================
+    ✓ SBOM of image already cached, 190 packages indexed
+    ✓ No vulnerable package detected
+
+
+## Overview
+
+                   │               Analyzed Image               
+───────────────────┼────────────────────────────────────────────
+ Target            │  thomimunioz/iii-backend-coderhouse:1.0.0  
+   digest          │  43d43bb1e6c3                              
+   platform        │ linux/amd64                                
+   vulnerabilities │    0C     0H     0M     0L                 
+   size            │ 79 MB                                      
+   packages        │ 190                                        
+
+
+## Packages and Vulnerabilities
+
+  No vulnerable packages detected
 </code></pre>
+<p>Resultado de la corrección:</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Antes</th>
+<th>Después</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Vulnerabilidades críticas</td>
+<td>1</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>Vulnerabilidades altas</td>
+<td>5</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>Vulnerabilidades medias</td>
+<td>0 (8 en la base)</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>Health score</td>
+<td>C (56%)</td>
+<td><strong>B (78%)</strong></td>
+</tr>
+<tr>
+<td>Políticas cumplidas</td>
+<td>4 de 7</td>
+<td>5 de 7</td>
+</tr>
+<tr>
+<td>Paquetes indexados</td>
+<td>360</td>
+<td>190</td>
+</tr>
+</tbody></table>
+<p>El propio reporte deja la prueba a la vista: en la fila <code>Base image</code> sigue figurando <code>node:22-alpine</code> con <strong>1C 5H 8M</strong>, mientras que la fila <code>Target</code> —la imagen construida a partir de esa misma base— reporta <strong>0C 0H 0M 0L</strong>. La diferencia la produce exclusivamente la eliminación de npm en la etapa final.</p>
+<p>Las dos políticas que siguen sin cumplirse son <code>Copyleft licensed packages found</code> (paquetes con licencias tipo copyleft entre las dependencias, una cuestión legal y no de seguridad) y <code>Required supply chain attestations missing</code> (falta firmar la imagen con atestaciones SLSA, algo que excede el alcance de este entregable).</p>
 <h3>Segunda opinión: Trivy</h3>
-<pre><code class="language-text">PENDIENTE: resumen del reporte de Trivy (corrida #6 del pipeline)
+<pre><code class="language-text">Resumen del escaneo de Trivy (reporte completo en entrega/logs/trivy.log)
+
+
+Report Summary
+
+┌──────────────────────────────────────────────────────────────────────────┬──────────┬─────────────────┬─────────┐
+│                                  Target                                  │   Type   │ Vulnerabilities │ Secrets │
+├──────────────────────────────────────────────────────────────────────────┼──────────┼─────────────────┼─────────┤
+│ thomimunioz/iii-backend-coderhouse:1.0.0 (alpine 3.24.1)                 │  alpine  │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────┼──────────┼─────────────────┼─────────┤
+│ app/node_modules/@apidevtools/json-schema-ref-parser/package.json        │ node-pkg │        0        │    -    │
+├──────────────────────────────────────────────────────────────────────────┼──────────┼─────────────────┼─────────┤
+
+Filas de paquetes npm analizadas: 167
+Todas las filas de la tabla completa reportan 0 vulnerabilidades.
 </code></pre>
 <h3>Auditoría de las dependencias de Node</h3>
 <p>Complemento del escaneo de la imagen: <code>docker scout</code> y Trivy analizan la imagen completa (sistema operativo y paquetes detectados), mientras que <code>npm audit</code> analiza el árbol de dependencias declarado en <code>package.json</code>.</p>
@@ -3023,7 +3161,7 @@ Sistema operativo: Ubuntu 24.04.4 LTS
 Node.js:           v22.23.1
 npm:               10.9.8
 Docker:            Docker version 28.0.4, build b8034c0
-Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
+Commit:            85d806c55a7bbed5122b3ce90ac567e1e33b0b0c
 </code></pre>
 <h3>Tests — <code>npm test</code></h3>
 <pre><code class="language-text">
@@ -3067,7 +3205,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
 
 
-[92m [0m[32m 28 passing[0m[90m (131ms)[0m
+[92m [0m[32m 28 passing[0m[90m (139ms)[0m
 </code></pre>
 <h3>Cobertura — <code>npm run test:coverage:adoption</code></h3>
 <pre><code class="language-text">
@@ -3078,7 +3216,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
 [0m[0m
 [0m  Tests funcionales - adoption.router.js (/api/adoptions)[0m
 [0m    GET /api/adoptions - listado de adopciones[0m
-    [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m
+    [32m  ✔[0m[90m responde 200 con status success y el listado completo de adopciones[0m[33m (42ms)[0m
     [32m  ✔[0m[90m responde 200 con un array vacio cuando todavia no hay adopciones[0m
     [32m  ✔[0m[90m devuelve cada adopcion con las propiedades _id, owner y pet[0m
     [32m  ✔[0m[90m responde 500 sin filtrar detalles internos si el service falla[0m
@@ -3111,7 +3249,7 @@ Commit:            46763f8cc9fa2f668e4bc03d91ff299936cea47d
     [32m  ✔[0m[90m responde 404 con formato JSON ante rutas anidadas inexistentes[0m
 
 
-[92m [0m[32m 28 passing[0m[90m (131ms)[0m
+[92m [0m[32m 28 passing[0m[90m (154ms)[0m
 
 ---------------------------------|---------|----------|---------|---------|-------------------
 File                             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
@@ -3135,13 +3273,13 @@ All files                        |     100 |    95.65 |     100 |     100 |
 {&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[]}
 --- POST /api/mocks/generateData?users=3&amp;pets=5
 {&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Datos generados e insertados en MongoDB&quot;,&quot;payload&quot;:{&quot;users&quot;:3,&quot;pets&quot;:5,&quot;mockPassword&quot;:&quot;coder123&quot;}}
---- Usuario de prueba: 6a6be87772365f98482a6e88
---- Mascota de prueba: 6a6be87772365f98482a6e8b
+--- Usuario de prueba: 6a6beb15659095554c74579f
+--- Mascota de prueba: 6a6beb15659095554c7457a2
 --- POST /api/adoptions/$USER_ID/$PET_ID (adopcion exitosa)
-{&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Pet adopted&quot;,&quot;payload&quot;:{&quot;owner&quot;:&quot;6a6be87772365f98482a6e88&quot;,&quot;pet&quot;:&quot;6a6be87772365f98482a6e8b&quot;,&quot;_id&quot;:&quot;6a6be87772365f98482a6e90&quot;,&quot;__v&quot;:0}}
+{&quot;status&quot;:&quot;success&quot;,&quot;message&quot;:&quot;Pet adopted&quot;,&quot;payload&quot;:{&quot;owner&quot;:&quot;6a6beb15659095554c74579f&quot;,&quot;pet&quot;:&quot;6a6beb15659095554c7457a2&quot;,&quot;_id&quot;:&quot;6a6beb15659095554c7457a7&quot;,&quot;__v&quot;:0}}
 HTTP 201
 --- GET /api/adoptions (ya tiene la adopcion registrada)
-{&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[{&quot;_id&quot;:&quot;6a6be87772365f98482a6e90&quot;,&quot;owner&quot;:&quot;6a6be87772365f98482a6e88&quot;,&quot;pet&quot;:&quot;6a6be87772365f98482a6e8b&quot;,&quot;__v&quot;:0}]}
+{&quot;status&quot;:&quot;success&quot;,&quot;payload&quot;:[{&quot;_id&quot;:&quot;6a6beb15659095554c7457a7&quot;,&quot;owner&quot;:&quot;6a6beb15659095554c74579f&quot;,&quot;pet&quot;:&quot;6a6beb15659095554c7457a2&quot;,&quot;__v&quot;:0}]}
 --- POST de la MISMA mascota otra vez (debe dar 400)
 {&quot;status&quot;:&quot;error&quot;,&quot;error&quot;:&quot;Pet is already adopted&quot;}
 HTTP 400
@@ -3158,7 +3296,7 @@ HTTP 200
 <pre><code class="language-text">#0 building with &quot;default&quot; instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 4.73kB done
+#1 transferring dockerfile: 5.32kB done
 #1 DONE 0.0s
 
 #2 resolve image config for docker-image://docker.io/docker/dockerfile:1
@@ -3194,37 +3332,40 @@ HTTP 200
 #11 CACHED
 
 #12 [prune 1/1] RUN npm prune --omit=dev &amp;&amp; npm cache clean --force
-#12 0.777 
-#12 0.777 up to date, audited 163 packages in 618ms
-#12 0.777 
-#12 0.777 41 packages are looking for funding
-#12 0.777   run `npm fund` for details
-#12 0.778 
-#12 0.778 found 0 vulnerabilities
-#12 0.879 npm warn using --force Recommended protections disabled.
-#12 DONE 1.3s
+#12 1.138 
+#12 1.138 up to date, audited 163 packages in 983ms
+#12 1.138 
+#12 1.138 41 packages are looking for funding
+#12 1.138   run `npm fund` for details
+#12 1.139 
+#12 1.139 found 0 vulnerabilities
+#12 1.228 npm warn using --force Recommended protections disabled.
+#12 DONE 2.8s
 
-#13 [runtime 1/3] COPY --from=prune --chown=node:node /app/node_modules ./node_modules
-#13 DONE 0.3s
+#13 [runtime 1/4] COPY --from=prune --chown=node:node /app/node_modules ./node_modules
+#13 DONE 1.0s
 
-#14 [runtime 2/3] COPY --chown=node:node package.json server.js ./
+#14 [runtime 2/4] COPY --chown=node:node package.json server.js ./
 #14 DONE 0.0s
 
-#15 [runtime 3/3] COPY --chown=node:node src ./src
+#15 [runtime 3/4] COPY --chown=node:node src ./src
 #15 DONE 0.0s
 
-#16 exporting to image
-#16 exporting layers
-#16 exporting layers 0.7s done
-#16 writing image sha256:172bde943974eb978f80af7125712efbb8c70e4dd88b9293db3a1fc92eb127e8 done
-#16 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
-#16 DONE 0.7s
+#16 [runtime 4/4] RUN rm -rf /usr/local/lib/node_modules/npm            /usr/local/bin/npm            /usr/local/bin/npx
+#16 DONE 0.5s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.8s done
+#17 writing image sha256:43d43bb1e6c306cf1e21e043979c3f421b5ab492097abd1b0a77135b01499feb done
+#17 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
+#17 DONE 0.8s
 </code></pre>
 <h3>Ejecución del contenedor</h3>
 <pre><code class="language-text">==============================================================
  Red y contenedores
 ==============================================================
-e6b5263655dde102953e2be2cedea4f5b7cf9706e3ecbecc5bd8c4866b265af1
+fe348ff03dd09392438e18f1db84b90280adf88ca4eae7eab6599f491d9e1b1d
 Unable to find image &#39;mongo:7&#39; locally
 7: Pulling from library/mongo
 d6834b4a794c: Already exists
@@ -3235,33 +3376,35 @@ bd2fcc94b9a5: Pulling fs layer
 b018bf118dcf: Pulling fs layer
 a4ab1d4d252a: Pulling fs layer
 6a382e0eb5fb: Pulling fs layer
-bd2fcc94b9a5: Waiting
 b018bf118dcf: Waiting
 a4ab1d4d252a: Waiting
+bd2fcc94b9a5: Waiting
 6a382e0eb5fb: Waiting
 906a31ae187c: Verifying Checksum
 906a31ae187c: Download complete
-906a31ae187c: Pull complete
+e208bdca56e1: Verifying Checksum
 e208bdca56e1: Download complete
 ed44cde2167b: Verifying Checksum
 ed44cde2167b: Download complete
+906a31ae187c: Pull complete
 bd2fcc94b9a5: Verifying Checksum
 bd2fcc94b9a5: Download complete
+b018bf118dcf: Verifying Checksum
 b018bf118dcf: Download complete
 6a382e0eb5fb: Verifying Checksum
 6a382e0eb5fb: Download complete
 ed44cde2167b: Pull complete
+a4ab1d4d252a: Verifying Checksum
+a4ab1d4d252a: Download complete
 e208bdca56e1: Pull complete
 bd2fcc94b9a5: Pull complete
 b018bf118dcf: Pull complete
-a4ab1d4d252a: Verifying Checksum
-a4ab1d4d252a: Download complete
 a4ab1d4d252a: Pull complete
 6a382e0eb5fb: Pull complete
 Digest: sha256:9bdaeb6dac6e7e762e84e2f84103d1f9bb078fa1ba6bde8bb9d2274f655ad173
 Status: Downloaded newer image for mongo:7
-afcda80eb577be582c28e7c395bcf82b9d56f3d797cce04979a128b9d31ca46d
-95f829a65b5fd271dd11069c95dff7ce52c285c132bf303f46845572fd401bfa
+aaa94330fb9eaf20d3e5c2ef172c92b6ece1a7c66898b7bef5eb339f1752cc56
+cea0d325b473fa55bbfc26d8dae82f19ce26da7fdbe895cd838ca4dbcae79a84
 
 Esperando a que el contenedor quede healthy...
 Contenedor healthy despues de 4 intentos
@@ -3695,11 +3838,49 @@ docker build --target test -t adoptme-tests .
 
 ### Log de construcción
 
-&lt;!-- PENDIENTE: pegar la salida real de `docker build -t thomimunioz/iii-backend-coderhouse:1.0.0 .` --&gt;
+Últimas líneas del build (log completo en [`entrega/logs/docker-build.log`](entrega/logs/docker-build.log)):
+
+```
+#15 [runtime 3/4] COPY --chown=node:node src ./src
+#15 DONE 0.0s
+
+#16 [runtime 4/4] RUN rm -rf /usr/local/lib/node_modules/npm  /usr/local/bin/npm  /usr/local/bin/npx
+#16 DONE 0.5s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.8s done
+#17 writing image sha256:43d43bb1e6c306cf1e21e043979c3f421b5ab492097abd1b0a77135b01499feb done
+#17 naming to docker.io/thomimunioz/iii-backend-coderhouse:1.0.0 done
+#17 DONE 0.8s
+```
 
 ### Log de ejecución del contenedor
 
-&lt;!-- PENDIENTE: pegar la salida real de `docker logs adoptme` --&gt;
+Log completo en [`entrega/logs/docker-run.log`](entrega/logs/docker-run.log):
+
+```
+$ docker ps
+NAMES           IMAGE                                      STATUS                   PORTS
+adoptme         thomimunioz/iii-backend-coderhouse:1.0.0   Up 6 seconds (healthy)   0.0.0.0:8080-&gt;8080/tcp
+adoptme-mongo   mongo:7                                    Up 6 seconds             27017/tcp
+
+$ docker logs adoptme
+Conectado a MongoDB
+Servidor escuchando en el puerto 8080
+Documentacion OpenAPI en http://localhost:8080/api/docs
+
+$ docker exec adoptme id
+uid=1000(node) gid=1000(node) groups=1000(node),1000(node)
+
+$ docker stop adoptme
+SIGTERM recibido, cerrando la aplicacion...
+Servidor HTTP y conexion a MongoDB cerrados
+```
+
+El `STATUS` en `(healthy)` confirma que el `HEALTHCHECK` responde, el `uid=1000(node)` que el proceso no corre como root, y las dos últimas líneas que el contenedor cierra ordenadamente ante `docker stop`.
+
+La verificación funcional completa de los endpoints contra el contenedor (adopción exitosa 201, mascota ya adoptada 400, adopción inexistente 404, id inválido 400) está en [`entrega/logs/verificacion-endpoints.log`](entrega/logs/verificacion-endpoints.log).
 
 ---
 
@@ -3730,7 +3911,34 @@ npm audit --omit=dev
 
 `npm audit --omit=dev` reporta **0 vulnerabilidades** en las dependencias de producción, que son las únicas que llegan a la imagen. Las vulnerabilidades reportadas por `npm audit` sin filtros pertenecen a devDependencies (herramientas de testing), que la etapa `prune` elimina antes de construir la imagen final.
 
-&lt;!-- PENDIENTE: pegar la salida real de `docker scout quickview` --&gt;
+Resultado del escaneo (log completo en [`entrega/logs/docker-scout.log`](entrega/logs/docker-scout.log)):
+
+```
+ Target             │  thomimunioz/iii-backend-coderhouse:1.0.0  │    0C     0H     0M     0L
+   digest           │  43d43bb1e6c3                              │
+ Base image         │  node:22-alpine                            │    1C     5H     8M     0L
+
+Policy status  FAILED  (5/7 policies met)
+Health score  B  (78%)
+
+## Packages and Vulnerabilities
+
+  No vulnerable packages detected
+```
+
+**0 vulnerabilidades en la imagen publicada.** El dato interesante está en la comparación: la imagen base `node:22-alpine` reporta 1 crítica, 5 altas y 8 medias, mientras que la imagen construida a partir de ella reporta 0.
+
+La diferencia es que esas vulnerabilidades venían en `tar`, `brace-expansion`, `sigstore` y `picomatch`, que son dependencias internas de **npm**, preinstalado en la imagen base. Como la aplicación arranca con `node server.js` y no usa npm en runtime, el gestor de paquetes se elimina en la etapa final del Dockerfile:
+
+```dockerfile
+RUN rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx
+```
+
+Además de eliminar los CVE, esto reduce la superficie de ataque: un contenedor productivo no debería tener una herramienta capaz de descargar e instalar código arbitrario.
+
+Como segunda opinión se corre también **Trivy**, que reporta 0 vulnerabilidades tanto en el sistema operativo (Alpine 3.24.1) como en los 167 paquetes de `node_modules` ([`entrega/logs/trivy.log`](entrega/logs/trivy.log)).
 
 ---
 
