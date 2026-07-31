@@ -85,9 +85,11 @@ docker scout quickview thomimunioz/iii-backend-coderhouse:1.0.0
 docker scout cves --only-severity critical,high thomimunioz/iii-backend-coderhouse:1.0.0
 ```
 
-{{LOG:entrega/logs/docker-scout.log}}
+### Primer escaneo: el hallazgo
 
-### Hallazgo del primer escaneo y cómo se corrigió
+{{LOG:entrega/logs/docker-scout-antes.log}}
+
+### Análisis del hallazgo y corrección aplicada
 
 La primera versión de la imagen arrojó **1 vulnerabilidad crítica y 5 altas**, repartidas en cuatro paquetes: `tar`, `brace-expansion`, `sigstore` y `picomatch`.
 
@@ -115,6 +117,12 @@ Esto produce dos beneficios:
 | Reduce la superficie de ataque | Un contenedor productivo sin gestor de paquetes impide que, ante una ejecución remota de código, el atacante instale herramientas adicionales |
 
 Una aclaración honesta sobre el tamaño: borrar archivos en una capa superior **no achica** la imagen en disco, porque los archivos siguen existiendo en la capa base y solo se marcan como eliminados. Lo que cambia es el sistema de archivos efectivo del contenedor, que es lo que analizan los escáneres y lo que ve un proceso corriendo adentro. La ganancia acá es de seguridad, no de peso.
+
+### Segundo escaneo: verificación de la corrección
+
+Escaneo de la imagen publicada, ya sin npm:
+
+{{LOG:entrega/logs/docker-scout.log}}
 
 ### Segunda opinión: Trivy
 
