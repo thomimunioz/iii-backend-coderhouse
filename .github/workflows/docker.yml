@@ -82,10 +82,6 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
 
-    # Necesario para que el ultimo paso pueda versionar los logs de evidencia.
-    permissions:
-      contents: write
-
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
@@ -300,19 +296,7 @@ jobs:
           name: logs-docker
           path: logs/
 
-      # Los logs se versionan en el repositorio para que la evidencia del
-      # entregable quede sincronizada con la ultima corrida, sin descargar nada
-      # a mano. El marcador [skip ci] evita que este push dispare el pipeline
-      # de nuevo y entre en un bucle infinito.
-      - name: Versionar los logs de evidencia
-        run: |
-          cp logs/*.log entrega/logs/
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add entrega/logs
-          if git diff --staged --quiet; then
-            echo "Los logs no cambiaron respecto de la corrida anterior."
-          else
-            git commit -m "Actualiza los logs de evidencia desde CI [skip ci]"
-            git push origin HEAD:main
-          fi
+      # Los logs de evidencia se descargan desde el artifact "logs-docker" y se
+      # versionan a mano en entrega/logs/. Automatizar ese commit requiere
+      # habilitar permisos de escritura para los workflows en la configuracion
+      # del repositorio, que no es necesario para este entregable.

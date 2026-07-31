@@ -130,6 +130,20 @@ process.on('SIGINT', () => shutdown('SIGINT'))
 
 que cierran el servidor HTTP, esperan a que terminen las requests en curso, cierran la conexión a MongoDB y salen con código 0. Por eso no hace falta agregar un init externo como `dumb-init` o `tini`: el proceso maneja sus señales. (Si igual se quisiera un init, alcanza con `docker run --init`.)
 
+### Eliminación de `npm` de la imagen final
+
+La imagen base `node:22-alpine` trae npm preinstalado, y npm arrastra sus propias dependencias (`tar`, `brace-expansion`, `sigstore`, `picomatch`). El primer escaneo de seguridad atribuyó a esos paquetes 1 vulnerabilidad crítica y 5 altas, ninguna relacionada con el código del proyecto (ver sección 4).
+
+Como la aplicación arranca con `node server.js` y ni el `HEALTHCHECK` ni el apagado ordenado usan npm, el gestor de paquetes se elimina de la etapa `runtime`:
+
+```dockerfile
+RUN rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx
+```
+
+Es una aplicación directa del principio de **mínimo privilegio**: en un contenedor productivo no debería existir una herramienta capaz de descargar e instalar código arbitrario.
+
 ### Resumen de las optimizaciones
 
 | Técnica | Beneficio |
@@ -141,6 +155,7 @@ que cierran el servidor HTTP, esperan a que terminen las requests en curso, cier
 | Toolchain virtual + `--no-cache` | No quedan artefactos de compilación |
 | `prune` + `cache clean` | `bcrypt` se compila una sola vez y no queda caché de npm |
 | `USER node` | El proceso no corre como root |
+| Eliminación de `npm` | Sin gestor de paquetes en runtime: 6 CVE menos y menor superficie de ataque |
 | `COPY --chown` | Evita duplicar capas por un `chown` posterior |
 | `.dockerignore` | Contexto de build mínimo y sin secretos |
 | `HEALTHCHECK` | Estado del servicio observable sin instalar dependencias extra |
@@ -186,6 +201,8 @@ docker build --progress=plain -t thomimunioz/iii-backend-coderhouse:1.0.0 .
 ```
 
 {{LOG:entrega/logs/docker-build.log}}
+
+En este log se observa la **caché de capas funcionando**: los pasos `[deps 1/3]` a `[deps 3/3]` aparecen como `CACHED` porque el build anterior (el de la etapa `test`, que corre primero en el pipeline) ya los había construido. Como ninguna de esas capas depende del código de `src/`, se reutilizan tal cual y el build final se resuelve en segundos. El log de construcción completo desde cero, con la instalación de dependencias y la compilación de `bcrypt`, es el de la sección siguiente.
 
 ## Tests ejecutados dentro de la imagen
 
